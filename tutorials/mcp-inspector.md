@@ -2,7 +2,7 @@
 
 The **MCP Inspector** is an interactive debugging tool for testing MCP servers during development.
 
-## What Is It?
+## What Is It? push
 
 The Inspector provides a web-based UI that connects to your MCP server, letting you:
 - View available tools, resources, and prompts
