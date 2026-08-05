@@ -58,25 +58,45 @@ server.tool("query", "Run SQL", { sql: z.string() }, async ({ sql }) => {
 ## Large Response Handling
 
 - **Truncate** large results with a summary.
-- **Paginate** collections instead of returning all items.
-  Use cursor-based pagination for `list` operations to avoid overloading clients.
+- **Paginate** results instead of returning all items.
+  Tools that return many items should implement their own pagination logic.
+  Use cursor-based pagination for built-in `list` methods (tools, resources, and prompts) to avoid overloading clients.
   See the [Pagination guide](../server/pagination.md) for more information.
 - **Stream** using progress notifications for long operations.
 - **Compress** data where the format supports it.
 
-### Cursor pagination
-For `list` methods, return a `nextCursor` when more results are available:
+### Custom tool pagination
+Tools that return many items should implement their own pagination logic using tool arguments.
+This allows the LLM to request data in manageable chunks.
 
 ```typescript
-server.setRequestHandler("tools/list", async (request) => {
-  const cursor = request.params?.cursor;
-  const { tools, nextCursor } = await fetchToolsPage(cursor);
+server.tool(
+  "query_database",
+  "Query the database for records",
+  {
+    sql: z.string(),
+    cursor: z.string().optional(),
+    limit: z.number().optional().default(100)
+  },
+  async ({ sql, cursor, limit }) => {
+    const { records, nextCursor } = await db.execute(sql, { cursor, limit });
 
-  return {
-    tools,
-    nextCursor
-  };
-});
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify({
+            records,
+            nextCursor,
+            message: nextCursor 
+              ? "More results available. Call again with the nextCursor." 
+              : "End of results."
+          }, null, 2)
+        }
+      ]
+    };
+  }
+);
 ```
 
 ## Startup Optimization
