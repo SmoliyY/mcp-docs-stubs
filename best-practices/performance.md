@@ -57,10 +57,27 @@ server.tool("query", "Run SQL", { sql: z.string() }, async ({ sql }) => {
 
 ## Large Response Handling
 
-- **Truncate** large results with a summary
-- **Paginate** collections instead of returning all items
-- **Stream** using progress notifications for long operations
-- **Compress** data where format supports it
+- **Truncate** large results with a summary.
+- **Paginate** collections instead of returning all items.
+  Use cursor-based pagination for `list` operations to avoid overloading clients.
+  See the [Pagination guide](../server/pagination.md) for more information.
+- **Stream** using progress notifications for long operations.
+- **Compress** data where the format supports it.
+
+### Cursor pagination
+For `list` methods, return a `nextCursor` when more results are available:
+
+```typescript
+server.setRequestHandler("tools/list", async (request) => {
+  const cursor = request.params?.cursor;
+  const { tools, nextCursor } = await fetchToolsPage(cursor);
+
+  return {
+    tools,
+    nextCursor
+  };
+});
+```
 
 ## Startup Optimization
 
