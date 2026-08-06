@@ -35,8 +35,10 @@ Servers can request additional permissions mid-session without requiring a full 
 ### OpenID Connect Discovery (2025-11-25)
 Servers can use OIDC Discovery to advertise their auth configuration, simplifying client setup.
 
-### Dynamic Client Registration and Metadata (2025-11-25)
-MCP supports OAuth 2.0 Dynamic Client Registration and Client ID Metadata.
+### Dynamic Client Identification (2025-11-25)
+MCP supports Dynamic Client Registration and Client ID Metadata (CIMD).
+While Dynamic Client Registration is supported, it is considered an outdated process.
+**Client ID Metadata (CIMD)** is the preferred method for dynamic client identification.
 These features allow clients to identify themselves using metadata documents instead of static client IDs.
 This simplifies the onboarding process for new clients and servers.
 

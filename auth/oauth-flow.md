@@ -73,7 +73,11 @@ client_id=my-mcp-client
 
 ## Dynamic Client Identification (2025-11-25)
 
-The 2025-11-25 specification introduced support for Dynamic Client Registration and Client ID Metadata.
+The 2025-11-25 specification introduced support for Dynamic Client Registration and Client ID Metadata (CIMD).
+
+**Note:** Dynamic Client Registration is considered an outdated process.
+Developers are strongly recommended to use **Client ID Metadata (CIMD)** as the preferred method for dynamic client identification.
+
 Instead of using a static string for `client_id`, clients can use a URL that points to a metadata document.
 
 ### Client ID Metadata Document
