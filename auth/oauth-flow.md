@@ -2,6 +2,14 @@
 
 This document details the OAuth 2.0 authorization flow used by MCP for remote server authentication.
 
+## Specification versions
+
+The OAuth 2.0 flow and its subsequent enhancements were introduced and refined in the following MCP specifications:
+- **2025-06-18**: Introduced the classification of MCP servers as OAuth Resource Servers and added support for **Resource Indicators (RFC 8707)**.
+- **2025-11-25**: Added support for **OpenID Connect Discovery**, **Incremental Scope Consent**, and **OAuth Client ID Metadata**.
+
+Understanding these versions helps ensure compatibility between MCP clients and servers.
+
 ## Discovery
 
 The client first discovers the server's auth configuration:
