@@ -32,6 +32,14 @@ Servers can request additional permissions mid-session without requiring a full 
 ### OpenID Connect Discovery (2025-11-25)
 Servers can use OIDC Discovery to advertise their auth configuration, simplifying client setup.
 
+### OAuth Client ID Metadata (2025-11-25)
+Support for OAuth Client ID metadata documents enables standardized client registration information and improved client identity verification.
+Servers can use this metadata to verify client properties and ensure they are interacting with authorized applications.
+
+### Dynamic Client Registration (2025-11-25)
+MCP supports OAuth 2.0 Dynamic Client Registration (RFC 7591) to facilitate automated client setup.
+This allows clients to register with authorization servers dynamically, reducing manual configuration overhead and enabling more flexible deployment patterns.
+
 ## Authorization Server Metadata
 
 Servers expose their auth requirements at:
