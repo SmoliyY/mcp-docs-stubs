@@ -1,6 +1,7 @@
 # Transport Selection for Clients
 
-Choosing the right transport is important for client implementations. This guide helps you decide.
+Choosing the right transport is important for client implementations.
+This guide helps you decide.
 
 ## Decision Flow
 
@@ -41,6 +42,22 @@ The client manages the server's lifecycle:
 - Multiple clients connect to one server
 - Auth is required
 
+### Configuration Options
+
+The `StreamableHTTPClientTransport` constructor accepts an optional configuration object to customize the connection behavior.
+
+#### Custom Headers
+The `headers` property allows you to pass any valid HTTP headers.
+These headers are included in both the initial SSE connection request and subsequent POST requests.
+Common uses include:
+- **Authentication**: Passing Bearer tokens or API keys.
+- **Custom Metadata**: Including client-specific identifiers or context.
+- **Infrastructure**: Providing headers required by load balancers or reverse proxies.
+
+#### Request Control
+The transport supports additional configuration for managing the request lifecycle:
+- **signal**: An `AbortSignal` instance that allows you to cancel the transport's connection and any ongoing requests.
+
 ### TypeScript Setup
 ```typescript
 import {
@@ -57,23 +74,6 @@ const transport = new StreamableHTTPClientTransport(
   }
 );
 ```
-
-### Configuration Options
-
-The `StreamableHTTPClientTransport` constructor accepts an optional configuration object to customize the connection behavior.
-
-#### Custom Headers
-The `headers` property allows you to pass any valid HTTP headers.
-These headers are included in both the initial SSE connection request and subsequent POST requests.
-Common uses include:
-- **Authentication**: Passing Bearer tokens or API keys.
-- **Custom Metadata**: Including client-specific identifiers or context.
-- **Infrastructure**: Providing headers required by load balancers or reverse proxies.
-
-#### Request Control
-The transport supports additional configuration for managing the request lifecycle:
-- **signal**: An `AbortSignal` instance that allows you to cancel the transport's connection and any ongoing requests.
-<!-- TODO: verify if additional fetch-compatible options like 'credentials' or 'mode' are supported -->
 
 ## Fallback Strategy
 
