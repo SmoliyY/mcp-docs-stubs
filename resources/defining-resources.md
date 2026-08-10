@@ -41,6 +41,32 @@ server.resource(
 );
 ```
 
+## TypeScript — Binary Content
+
+```typescript
+server.resource(
+  "logo",
+  "assets://logo.png",
+  async (uri) => ({
+    contents: [{
+      uri: uri.href,
+      mimeType: "image/png",
+      blob: (await fs.readFile("logo.png")).toString("base64")
+    }]
+  })
+);
+```
+
+## TypeScript Parameters
+
+The `server.resource()` method accepts three primary arguments:
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | A unique identifier for the resource, such as `"readme"` or `"logo"`. |
+| `uri / template` | `string` | `ResourceTemplate` | The URI for the resource (e.g., `"assets://logo.png"`) or a `ResourceTemplate` for dynamic paths. |
+| `handler` | `Function` | An async callback that fetches and returns the resource content. |
+
 ## Python — Static Resource
 
 ```python
@@ -63,22 +89,6 @@ def get_table_schema(table_name: str) -> str:
     """Get the schema for a database table."""
     schema = db.get_schema(table_name)
     return json.dumps(schema)
-```
-
-## Resource with Binary Content
-
-```typescript
-server.resource(
-  "logo",
-  "assets://logo.png",
-  async (uri) => ({
-    contents: [{
-      uri: uri.href,
-      mimeType: "image/png",
-      blob: (await fs.readFile("logo.png")).toString("base64")
-    }]
-  })
-);
 ```
 
 ## Best Practices
