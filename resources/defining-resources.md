@@ -61,11 +61,15 @@ server.resource(
 
 The `server.resource()` method accepts three primary arguments:
 
+<Table>
+
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `name` | `string` | A unique identifier for the resource, such as `"readme"` or `"logo"`. |
-| `uri / template` | `string` | `ResourceTemplate` | The URI for the resource (e.g., `"assets://logo.png"`) or a `ResourceTemplate` for dynamic paths. |
+| `uri / template` | `string | ResourceTemplate` | The URI for the resource (e.g., `"assets://logo.png"`) or a `ResourceTemplate` for dynamic paths. |
 | `handler` | `Function` | An async callback that fetches and returns the resource content. |
+
+</Table>
 
 ## Python — Static Resource
 
