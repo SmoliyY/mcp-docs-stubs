@@ -51,11 +51,29 @@ const transport = new StreamableHTTPClientTransport(
   new URL("https://api.example.com/mcp"),
   {
     headers: {
-      Authorization: "Bearer token..."
+      Authorization: "Bearer token...",
+      "X-Custom-Header": "value"
     }
   }
 );
 ```
+
+### Configuration Options
+
+The `StreamableHTTPClientTransport` constructor accepts an optional configuration object to customize the connection behavior.
+
+#### Custom Headers
+The `headers` property allows you to pass any valid HTTP headers.
+These headers are included in both the initial SSE connection request and subsequent POST requests.
+Common uses include:
+- **Authentication**: Passing Bearer tokens or API keys.
+- **Custom Metadata**: Including client-specific identifiers or context.
+- **Infrastructure**: Providing headers required by load balancers or reverse proxies.
+
+#### Request Control
+The transport supports additional configuration for managing the request lifecycle:
+- **signal**: An `AbortSignal` instance that allows you to cancel the transport's connection and any ongoing requests.
+<!-- TODO: verify if additional fetch-compatible options like 'credentials' or 'mode' are supported -->
 
 ## Fallback Strategy
 
