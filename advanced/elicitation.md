@@ -1,29 +1,38 @@
 # Elicitation
 
-Elicitation allows MCP servers to request information from the user through the client.
-This enables interactive data collection during tool execution.
+Elicitation allows Model Context Protocol (MCP) servers to request information from the user through the client.
+This enables interactive data collection during tool execution, allowing servers to pause and wait for user input before continuing.
 
-## What is elicitation?
+## Explanation
 
-Sometimes a tool needs additional input from the user to proceed.
-Elicitation provides a structured way for servers to ask questions and receive answers.
+### What is elicitation?
 
-## Prerequisites
+Sometimes a tool needs additional input from the user to proceed that was not part of the initial request.
+Elicitation provides a structured mechanism for servers to ask questions and receive answers.
+Instead of failing when information is missing, a server can "elicit" the required data from the user.
 
-The client must declare elicitation support:
+### Key concepts
 
-```json
-{
-  "capabilities": {
-    "elicitation": {}
-  }
-}
-```
+- **Interactive flow**: The server initiates the request, and the client manages the user interface for the response.
+- **Structured data**: Servers can specify a JSON Schema to ensure the received data matches the expected format.
+- **URL mode**: A specialized mode for collecting file paths or external links.
+- **State management**: Elicitation is typically used within a tool execution where the server maintains state while waiting for the client.
 
-## Request
+### Use cases
 
-Servers send an `elicitation/create` request to the client.
-By default, the request includes a `requestedSchema` that defines the expected data.
+- **Configuration**: Gathering setup parameters like database connection strings or API keys.
+- **Confirmation**: Asking for explicit permission before performing destructive actions.
+- **Data input**: Collecting credentials or connection strings.
+- **Disambiguation**: Asking the user to choose between multiple possible interpretations of a request.
+- **File collection**: Requesting a local file for processing via URL mode.
+- **Link sharing**: Collecting references to external resources.
+
+## How-to guides
+
+### How to collect structured input
+
+To collect structured data, send an `elicitation/create` request with a `requestedSchema`.
+The client uses this schema to generate an appropriate input form for the user.
 
 ```json
 {
@@ -47,36 +56,10 @@ By default, the request includes a `requestedSchema` that defines the expected d
 }
 ```
 
-## Response
+### How to request a file upload
 
-The client returns a response that indicates the user's action and any provided content.
-
-```json
-{
-  "action": "accept",
-  "content": {
-    "database": "staging"
-  }
-}
-```
-
-## Response actions
-
-| Action | Description |
-| :--- | :--- |
-| `accept` | The user provided the requested information |
-| `decline` | The user refused to provide the information |
-| `cancel` | The user canceled the operation |
-
-## URL mode
-
-Use URL mode when you need the user to provide a URL.
-Common scenarios include:
-
-- **File uploads**: The client lets the user pick a local file and returns a URL.
-- **Link sharing**: The user provides a URL to an external resource.
-
-### URL request
+Use URL mode when you need the user to provide a file or a link.
+In this mode, the client typically provides a file picker or a text input for a URL.
 
 To request a URL, set `mode` to `"url"` and do not include `requestedSchema`.
 
@@ -92,35 +75,68 @@ To request a URL, set `mode` to `"url"` and do not include `requestedSchema`.
 }
 ```
 
-### URL response
+### How to handle user responses
 
-When the user provides a URL, the client returns it in the `content` object.
+Servers must handle three types of responses from the client: `accept`, `decline`, and `cancel`.
+
+1.  **Accept**: The user provided the data. Process the `content` field.
+2.  **Decline**: The user explicitly refused to provide the data. The server should fail the operation gracefully.
+3.  **Cancel**: The user closed the prompt without making a choice. The server should abort the current task.
+
+### How to chain elicitation steps
+
+You can perform multi-step elicitation by sending subsequent requests after receiving a response.
+This is useful for building interactive wizards.
+
+1.  Ask for a category (e.g., "Database").
+2.  Wait for the response (`accept` with `database: "staging"`).
+3.  Send a second request for a specific table based on the first answer.
+4.  Wait for the second response.
+
+## Technical reference
+
+### Capabilities
+
+Clients must declare support for elicitation in their initialization capabilities:
 
 ```json
 {
-  "action": "accept",
-  "content": {
-    "url": "https://example.com/uploads/data.csv"
+  "capabilities": {
+    "elicitation": {}
   }
 }
 ```
 
-## Multi-step elicitation
+### `elicitation/create` request
 
-You can chain elicitation steps, where each step builds on the previous one:
+The server sends an `elicitation/create` request to the client.
 
-1. Ask for the database. The user picks "staging".
-2. Ask for the table. The user picks "users".
-3. Ask for query parameters. The user provides filters.
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `message` | `string` | The prompt shown to the user. |
+| `requestedSchema` | `object` | (Optional) A JSON Schema defining the expected data. |
+| `mode` | `string` | (Optional) Use `"url"` for file and link collection. Defaults to schema-based. |
 
-## Use cases
+### Response format
 
-- **Configuration wizards**: Gather setup parameters
-- **Confirmation dialogs**: Ask "Are you sure you want to delete?"
-- **Data input**: Collect credentials or connection strings
-- **Disambiguation**: Clarify ambiguous requests
-- **File uploads**: Request documents for processing
-- **Link sharing**: Collect references to external resources
+The client returns a response that indicates the user's action and any provided content.
+
+```json
+{
+  "action": "accept" | "decline" | "cancel",
+  "content": {
+    "key": "value"
+  }
+}
+```
+
+### Response actions
+
+| Action | Description |
+| :--- | :--- |
+| `accept` | The user provided the requested information. |
+| `decline` | The user refused to provide the information. |
+| `cancel` | The user canceled the operation. |
 
 ## Best practices
 
@@ -128,4 +144,4 @@ You can chain elicitation steps, where each step builds on the previous one:
 - Use `requestedSchema` to constrain input for structured data.
 - Use `mode: "url"` for file and link collection.
 - Handle `decline` and `cancel` actions gracefully.
-- Minimize the number of elicitation steps.
+- Minimize the number of elicitation steps to avoid user fatigue.
