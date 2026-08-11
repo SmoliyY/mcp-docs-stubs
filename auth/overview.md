@@ -1,21 +1,27 @@
-# Authentication and Authorization
+# Authentication
 
-MCP utilizes OAuth 2.0 for authentication and authorization of remote servers.
-Authentication capabilities were updated in the 2025-06-18 and 2025-11-25 specifications.
+The Model Context Protocol (MCP) uses OAuth 2.0 to handle authentication and authorization for remote servers.
+This ensures that only authorized clients can access sensitive resources and tools.
+We updated how authentication works in the June 18, 2025, and November 25, 2025, versions of the specification.
 
-## Authentication Requirements
+## Authentication Needs
 
-- **stdio transport**: Typically bypasses authentication as it runs as a local process inheriting host permissions.
-- **Streamable HTTP**: Requires authentication for remote or multi-tenant environments.
+Whether you need authentication depends on how your client and server communicate:
 
-## OAuth 2.0 Flow
+- **Local (stdio)**:
+  If you run a server locally via `stdio`, you usually do not need authentication.
+  The server inherits the permissions of the user who runs it.
+- **Remote (HTTP)**:
+  If you connect to a remote server over HTTP (specifically Streamable HTTP), you almost always need to authenticate to keep the connection secure.
 
-MCP servers function as OAuth Resource Servers.
-The authorization process:
+## Authentication Process
 
-1. Discovery of server authorization requirements.
-2. Acquisition of an access token from the Authorization Server.
-3. Inclusion of the token in the `Authorization` header of MCP requests.
+At a high level, MCP servers act as OAuth Resource Servers.
+The basic flow follows these steps:
+
+1. The client finds out what authentication the server requires.
+2. The client gets an access token from an Authorization Server.
+3. The client includes that token in the `Authorization` header when it makes requests to the MCP server.
 
 ```http
 POST /mcp HTTP/1.1
@@ -25,36 +31,39 @@ Content-Type: application/json
 
 ## Key Features
 
-### Resource Indicators (RFC 8707)
+### Resource Indicators
 
-Clients use resource indicators to target specific MCP servers.
-This mechanism prevents token misuse across different servers.
+Clients use "resource indicators" (from RFC 8707) to specify which MCP server they want to access.
+This helps prevent a token meant for one server from being used on another.
 
-### Incremental Scope Consent (2025-11-25)
+### Dynamic Client Identification
 
-Servers MAY request additional permissions mid-session without full re-authorization.
+The November 2025 update added support for Dynamic Client Registration and Client ID Metadata (CIMD).
 
-### OpenID Connect Discovery (2025-11-25)
+**Note:** Dynamic Client Registration is now considered legacy.
+You should use Client ID Metadata (CIMD) for dynamic identification instead.
+CIMD lets clients identify themselves using a metadata document instead of a fixed, static client ID.
 
-Servers MAY use OIDC Discovery to advertise authentication configurations.
+### Incremental Scope Consent
 
-### Dynamic Client Identification (2025-11-25)
+Servers can ask for more permissions in the middle of a session.
+The client does not have to restart the whole authorization process to grant one more scope.
 
-MCP supports Dynamic Client Registration and Client ID Metadata (CIMD).
-Dynamic Client Registration is legacy; use Client ID Metadata (CIMD) for dynamic identification.
-CIMD allows clients to identify using metadata documents instead of static client identifiers.
+### OIDC Discovery
+
+Servers can use OpenID Connect (OIDC) Discovery to tell clients how they should authenticate.
 
 ## Authorization Server Metadata
 
-Servers expose authorization requirements at:
+Servers reveal their authentication requirements at a standard location:
 
 ```
 GET /.well-known/oauth-authorization-server
 ```
 
-## Security Requirements
+## Security Best Practices
 
-- Clients MUST validate tokens before use.
-- Servers MUST verify tokens on every request.
-- Tokens SHOULD have limited scopes and lifetimes.
-- HTTPS is REQUIRED for all authentication-related communication.
+- Always validate tokens before you use them.
+- Servers should verify the token on every single request.
+- Keep token lifetimes short and scopes as narrow as possible.
+- Use HTTPS for all authentication traffic.
