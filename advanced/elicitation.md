@@ -1,8 +1,9 @@
 # Elicitation
 
-Elicitation allows MCP servers to **request information from the user** through the client, enabling interactive data collection during tool execution.
+Elicitation allows MCP servers to request information from the user through the client.
+This enables interactive data collection during tool execution.
 
-## What Is Elicitation?
+## What is elicitation?
 
 Sometimes a tool needs additional input from the user to proceed.
 Elicitation provides a structured way for servers to ask questions and receive answers.
@@ -22,7 +23,7 @@ The client must declare elicitation support:
 ## Request
 
 Servers send an `elicitation/create` request to the client.
-By default, the request includes a `requestedSchema` defining the expected data.
+By default, the request includes a `requestedSchema` that defines the expected data.
 
 ```json
 {
@@ -48,7 +49,7 @@ By default, the request includes a `requestedSchema` defining the expected data.
 
 ## Response
 
-The client returns a response indicating the user's action and any provided content.
+The client returns a response that indicates the user's action and any provided content.
 
 ```json
 {
@@ -59,24 +60,25 @@ The client returns a response indicating the user's action and any provided cont
 }
 ```
 
-## Response Actions
+## Response actions
 
 | Action | Description |
-|--------|-------------|
-| `accept` | User provided the requested information |
-| `decline` | User refused to provide the information |
-| `cancel` | User cancelled the operation |
+| :--- | :--- |
+| `accept` | The user provided the requested information |
+| `decline` | The user refused to provide the information |
+| `cancel` | The user canceled the operation |
 
-## URL Mode
+## URL mode
 
-Servers can use **URL Mode** to request a URL from the user.
-This mode is specifically designed for:
-- **File uploads** — The client can handle local file selection and provide a URL to the server.
-- **Link sharing** — The user can provide a reference to an external resource.
+Use **URL mode** to request a URL from the user.
+This mode is designed for the following scenarios:
 
-### URL Request
+- **File uploads**: The client handles local file selection and provides a URL to the server.
+- **Link sharing**: The user provides a reference to an external resource.
 
-To request a URL, set the `mode` parameter to `"url"` and omit the `requestedSchema`:
+### URL request
+
+To request a URL, set the `mode` parameter to `"url"` and omit the `requestedSchema` property.
 
 ```json
 {
@@ -90,9 +92,9 @@ To request a URL, set the `mode` parameter to `"url"` and omit the `requestedSch
 }
 ```
 
-### URL Response
+### URL response
 
-When the user provides a URL, the client returns the URL in the `content` object:
+When the user provides a URL, the client returns it in the `content` object.
 
 ```json
 {
@@ -103,27 +105,27 @@ When the user provides a URL, the client returns the URL in the `content` object
 }
 ```
 
-## Multi-Step Elicitation
+## Multi-step elicitation
 
-Servers can chain elicitation steps, each building on the previous:
+You can chain elicitation steps, where each step builds on the previous one:
 
-1. Ask which database → User picks "staging"
-2. Ask which table → User picks "users"
-3. Ask for query parameters → User provides filters
+1. Ask for the database. The user picks "staging".
+2. Ask for the table. The user picks "users".
+3. Ask for query parameters. The user provides filters.
 
-## Use Cases
+## Use cases
 
-- **Configuration wizards** — Gathering setup parameters
-- **Confirmation dialogs** — "Are you sure you want to delete?"
-- **Data input** — Collecting credentials or connection strings
-- **Disambiguation** — Clarifying ambiguous requests
-- **File uploads** — Requesting documents for processing
-- **Link sharing** — Collecting references to external resources
+- **Configuration wizards**: Gather setup parameters
+- **Confirmation dialogs**: Ask "Are you sure you want to delete?"
+- **Data input**: Collect credentials or connection strings
+- **Disambiguation**: Clarify ambiguous requests
+- **File uploads**: Request documents for processing
+- **Link sharing**: Collect references to external resources
 
-## Best Practices
+## Best practices
 
-- Provide clear, specific questions
-- Use `requestedSchema` to constrain input for structured data
-- Use `mode: "url"` specifically for file and link collection
-- Handle `decline` and `cancel` gracefully
-- Minimize the number of elicitation steps
+- Provide clear, specific questions.
+- Use `requestedSchema` to constrain input for structured data.
+- Use `mode: "url"` for file and link collection.
+- Handle `decline` and `cancel` actions gracefully.
+- Minimize the number of elicitation steps.
