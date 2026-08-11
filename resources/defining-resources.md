@@ -43,6 +43,10 @@ server.resource(
 
 ## TypeScript — Binary Content
 
+For resources containing binary data, use the `blob` property in the `contents` array.
+The binary content must be encoded as a base64 string.
+You must also specify the appropriate `mimeType` for the content, such as `image/png` for images.
+
 ```typescript
 server.resource(
   "logo",
