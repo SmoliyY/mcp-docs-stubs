@@ -70,15 +70,15 @@ The client returns a response that indicates the user's action and any provided 
 
 ## URL mode
 
-Use **URL mode** to request a URL from the user.
-This mode is designed for the following scenarios:
+Use URL mode when you need the user to provide a URL.
+Common scenarios include:
 
-- **File uploads**: The client handles local file selection and provides a URL to the server.
-- **Link sharing**: The user provides a reference to an external resource.
+- **File uploads**: The client lets the user pick a local file and returns a URL.
+- **Link sharing**: The user provides a URL to an external resource.
 
 ### URL request
 
-To request a URL, set the `mode` parameter to `"url"` and omit the `requestedSchema` property.
+To request a URL, set `mode` to `"url"` and do not include `requestedSchema`.
 
 ```json
 {
