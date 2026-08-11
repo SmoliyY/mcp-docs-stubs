@@ -1,21 +1,21 @@
-# MCP Authentication and Authorization
+# Authentication and Authorization
 
-MCP uses **OAuth 2.0** for authentication and authorization of remote servers.
-This was significantly enhanced in the 2025-06-18 and 2025-11-25 specifications.
+MCP utilizes OAuth 2.0 for authentication and authorization of remote servers.
+Authentication capabilities were updated in the 2025-06-18 and 2025-11-25 specifications.
 
-## When Auth Is Needed
+## Authentication Requirements
 
-- **stdio transport**: Usually no auth needed (local process, inherits user's permissions)
-- **Streamable HTTP**: Auth required for remote/multi-tenant servers
+- **stdio transport**: Typically bypasses authentication as it runs as a local process inheriting host permissions.
+- **Streamable HTTP**: Requires authentication for remote or multi-tenant environments.
 
 ## OAuth 2.0 Flow
 
-MCP servers act as **OAuth Resource Servers**.
-The authorization flow:
+MCP servers function as OAuth Resource Servers.
+The authorization process:
 
-1. Client discovers the server's auth requirements
-2. Client obtains an access token from the authorization server
-3. Client includes the token in requests via the `Authorization` header
+1. Discovery of server authorization requirements.
+2. Acquisition of an access token from the Authorization Server.
+3. Inclusion of the token in the `Authorization` header of MCP requests.
 
 ```http
 POST /mcp HTTP/1.1
@@ -23,35 +23,38 @@ Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
-## Key Auth Features
+## Key Features
 
 ### Resource Indicators (RFC 8707)
-Clients use resource indicators to specify which MCP server the token is intended for.
-This prevents a malicious server from using tokens meant for another server.
+
+Clients use resource indicators to target specific MCP servers.
+This mechanism prevents token misuse across different servers.
 
 ### Incremental Scope Consent (2025-11-25)
-Servers can request additional permissions mid-session without requiring a full re-authorization flow.
+
+Servers MAY request additional permissions mid-session without full re-authorization.
 
 ### OpenID Connect Discovery (2025-11-25)
-Servers can use OIDC Discovery to advertise their auth configuration, simplifying client setup.
+
+Servers MAY use OIDC Discovery to advertise authentication configurations.
 
 ### Dynamic Client Identification (2025-11-25)
+
 MCP supports Dynamic Client Registration and Client ID Metadata (CIMD).
-While Dynamic Client Registration is supported, it is considered an outdated process.
-**Client ID Metadata (CIMD)** is the preferred method for dynamic client identification.
-These features allow clients to identify themselves using metadata documents instead of static client IDs.
-This simplifies the onboarding process for new clients and servers.
+Dynamic Client Registration is legacy; use Client ID Metadata (CIMD) for dynamic identification.
+CIMD allows clients to identify using metadata documents instead of static client identifiers.
 
 ## Authorization Server Metadata
 
-Servers expose their auth requirements at:
+Servers expose authorization requirements at:
+
 ```
 GET /.well-known/oauth-authorization-server
 ```
 
 ## Security Requirements
 
-- Clients MUST validate tokens before use
-- Servers MUST verify tokens on every request
-- Tokens SHOULD have limited scopes and lifetimes
-- HTTPS is required for all auth-related communication
+- Clients MUST validate tokens before use.
+- Servers MUST verify tokens on every request.
+- Tokens SHOULD have limited scopes and lifetimes.
+- HTTPS is REQUIRED for all authentication-related communication.

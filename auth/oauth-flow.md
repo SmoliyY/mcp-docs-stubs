@@ -1,10 +1,10 @@
-# OAuth 2.0 Flow in MCP
+# OAuth 2.0 Flow
 
-This document details the OAuth 2.0 authorization flow used by MCP for remote server authentication.
+MCP implements the OAuth 2.0 authorization code flow for remote server authentication.
 
 ## Discovery
 
-The client first discovers the server's auth configuration:
+Discovery procedure:
 
 ```http
 GET /.well-known/oauth-authorization-server HTTP/1.1
@@ -27,6 +27,7 @@ Response:
 ## Authorization Code Flow
 
 ### Step 1: Authorization Request
+
 ```
 GET /authorize?
   response_type=code&
@@ -40,6 +41,7 @@ GET /authorize?
 ```
 
 ### Step 2: Token Exchange
+
 ```http
 POST /token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -51,7 +53,8 @@ client_id=my-mcp-client&
 code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
 ```
 
-### Step 3: Use the Token
+### Step 3: Resource Request
+
 ```http
 POST /mcp HTTP/1.1
 Authorization: Bearer <access_token>
@@ -71,19 +74,19 @@ refresh_token=<refresh_token>&
 client_id=my-mcp-client
 ```
 
-## Dynamic Client Identification (2025-11-25)
+## Dynamic Client Identification
 
 The 2025-11-25 specification introduced support for Dynamic Client Registration and Client ID Metadata (CIMD).
 
-**Note:** Dynamic Client Registration is considered an outdated process.
-Developers are strongly recommended to use **Client ID Metadata (CIMD)** as the preferred method for dynamic client identification.
+**Warning:** Dynamic Client Registration is legacy.
+Implementations SHOULD use Client ID Metadata (CIMD) for dynamic client identification.
 
-Instead of using a static string for `client_id`, clients can use a URL that points to a metadata document.
+Clients MAY provide a URL for `client_id` that references a metadata document instead of using a static string.
 
 ### Client ID Metadata Document
 
-The metadata document is a JSON file that describes the client.
-The Authorization Server fetches this document to verify the client's identity and configuration.
+The metadata document is a JSON file describing the client.
+The Authorization Server retrieves this document to verify client identity and configuration.
 
 Example metadata document (`https://client.example.com/mcp-client.json`):
 
@@ -100,9 +103,9 @@ Example metadata document (`https://client.example.com/mcp-client.json`):
 }
 ```
 
-### Metadata Usage in the Flow
+### Metadata Usage
 
-When using dynamic identification, the `client_id` in the authorization request is the URL of the metadata document.
+When using dynamic identification, the `client_id` in the authorization request MUST be the URL of the metadata document.
 
 ```
 GET /authorize?
@@ -116,8 +119,8 @@ GET /authorize?
   resource=https://mcp-server.example.com
 ```
 
-The Authorization Server will fetch the metadata from the provided URL, validate it, and use the information (like `redirect_uris`) for the flow.
+The Authorization Server fetches the metadata from the `client_id` URL, validates the content, and enforces the registered `redirect_uris`.
 
 ## PKCE
 
-MCP requires **PKCE** (Proof Key for Code Exchange) for all authorization code flows, even for confidential clients.
+MCP requires Proof Key for Code Exchange (PKCE) for all authorization code flows, including those for confidential clients.
