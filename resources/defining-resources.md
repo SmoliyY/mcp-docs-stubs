@@ -1,4 +1,4 @@
-# Defining MCP Resources
+# Define MCP resources
 
 This guide covers how to create resources in MCP servers.
 
@@ -57,9 +57,9 @@ server.resource(
 );
 ```
 
-## TypeScript Parameters
+## TypeScript parameters
 
-The `server.resource()` method accepts three primary arguments:
+The `server.resource()` method uses three main parameters to set up a resource:
 
 {% table %}
 * Parameter
@@ -68,15 +68,15 @@ The `server.resource()` method accepts three primary arguments:
 ---
 * `name`
 * `string`
-* A unique identifier for the resource, such as `"readme"` or `"logo"`.
+* A unique name to identify this resource, such as `"readme"` or `"logo"`.
 ---
 * `uri / template`
 * `string | ResourceTemplate`
-* The URI for the resource (e.g., `"assets://logo.png"`) or a `ResourceTemplate` for dynamic paths.
+* Either a fixed address (like `"assets://logo.png"`) or a pattern used to create addresses for dynamic resources.
 ---
 * `handler`
 * `Function`
-* An async callback that fetches and returns the resource content.
+* A function that gets and returns the resource content when it is requested.
 {% /table %}
 
 ## Python — Static Resource
