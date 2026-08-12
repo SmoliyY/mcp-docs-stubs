@@ -145,14 +145,6 @@ async function callLLM({ messages, tools }) {
 }
 ```
 
-### SDK Primitives
-
-- **`Client`**: This class connects to MCP servers.
-- **`listTools()`**: This method finds tools.
-It shows the agent what the agent can do.
-- **`callTool(name, arguments)`**: This method runs a tool on the server.
-It receives the result.
-
 ## Multi-Agent Systems
 
 A multi-agent system divides a complex task between different agents.
