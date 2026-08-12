@@ -1,22 +1,27 @@
 # Agent Patterns
 
-You can use the Model Context Protocol (MCP) to build many different types of AI agents.
-From simple tool-users to complex multi-agent systems, MCP provides a standard way for agents to interact with their environment.
+Use the Model Context Protocol (MCP) to build different types of AI agents.
+MCP provides a standard way for agents to interact with their environment.
+These agents can be simple or complex.
 
-## Tool-Using Agent
+## Agents and Tools
 
-This is the simplest pattern.
-An AI model uses MCP tools to perform tasks it can't do on its own.
+This pattern is the most simple.
+An AI model uses MCP tools to do tasks.
 
 ```
 User Request → AI Model → Tool Call → MCP Server → Result → AI Model → Response
 ```
 
-The AI model picks which tools to use and handles tasks that take several steps.
+The AI model selects tools.
+It completes tasks that have many steps.
 
 ## ReAct Pattern
 
-"Reasoning and Acting" (ReAct) is a common pattern where an agent thinks about what to do, takes an action, and then observes the result.
+The Reasoning and Acting (ReAct) pattern is common.
+The agent thinks about an action.
+It does the action.
+Then, it observes the result.
 
 ```
 Think: I need to find the bug in the code.
@@ -28,12 +33,14 @@ Observe: [file contents]
 Think: The issue is in line 42...
 ```
 
-The agent repeats this cycle until it completes the task.
+The agent repeats this cycle until the task is complete.
 
 ## Implementation Example
 
-Here is how you can build a basic agent loop in TypeScript using the `@modelcontextprotocol/sdk`.
-This agent connects to a server, finds available tools, and runs a simple reasoning cycle.
+Use the `@modelcontextprotocol/sdk` to build an agent loop in TypeScript.
+This agent connects to a server.
+It finds tools.
+It starts a reasoning cycle.
 
 ```typescript
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -55,11 +62,11 @@ async function runAgent() {
 
   await client.connect(transport);
 
-  // 2. Discover available tools
-  // The agent uses this list to know what it is allowed to do
+  // 2. Find available tools
+  // The agent uses this list to find allowed actions
   const { tools } = await client.listTools();
 
-  // 3. Simple Reasoning/Acting loop
+  // 3. Simple reasoning and action loop
   const task = "Search for 'error' in the project and describe the results.";
   let agentContext = [
     { role: "user", content: task }
@@ -71,8 +78,7 @@ async function runAgent() {
 
   while (steps < maxSteps) {
     steps += 1;
-    // In a real app, you would pass 'agentContext' and 'tools'
-    // to an AI model like Claude to decide the next step.
+    // Pass 'agentContext' and 'tools' to an AI model to decide the next step.
     const agentAction = await callLLM({
       messages: agentContext,
       tools: tools
@@ -94,7 +100,7 @@ async function runAgent() {
           agentAction.arguments
         );
 
-        // 5. Add the result back to the context for the next step
+        // 5. Add the result to the context for the next step
         agentContext.push({
           role: "assistant",
           content: `Called tool ${agentAction.toolName}`,
@@ -120,7 +126,7 @@ async function runAgent() {
 
 // Simplified AI model call
 async function callLLM({ messages, tools }) {
-  // A real implementation would use an AI provider's SDK
+  // An implementation uses an AI provider SDK
   const lastMessage = messages[messages.length - 1];
   const hasToolResult = lastMessage?.role === "tool";
 
@@ -139,59 +145,59 @@ async function callLLM({ messages, tools }) {
 }
 ```
 
-### Key SDK Primitives
+### SDK Primitives
 
-- **`Client`**: The main class that connects to and talks with MCP servers.
-- **`listTools()`**: Finds available tools so the agent knows what it can do.
-- **`callTool(name, arguments)`**: Runs a tool on the server and gets the result back.
+- **`Client`**: This class connects to MCP servers.
+- **`listTools()`**: This method finds tools.
+It shows the agent what the agent can do.
+- **`callTool(name, arguments)`**: This method runs a tool on the server.
+It receives the result.
 
 ## Multi-Agent Systems
 
-In a multi-agent system, you divide a complex task among several specialized agents.
-Each agent can have its own set of MCP servers.
+A multi-agent system divides a complex task between different agents.
+Each agent can use its own MCP servers.
 
-**Example Scenario: Software Development**
-- **Orchestrator**: Receives the user's request and decides which specialized agent should handle it.
-- **Coder Agent**: Uses a **Filesystem Server** to write code and a **Git Server** to commit changes.
-- **Reviewer Agent**: Uses a **Linter Server** or **Test Runner** to verify the code and report bugs.
+**Scenario example: Software development**
+- **Orchestrator**: It receives the request from the user.
+It selects an agent to do the task.
+- **Coder agent**: It uses a **Filesystem Server** to write code.
+It uses a **Git Server** to commit changes.
+- **Reviewer agent**: It uses a **Linter Server** or **Test Runner** to verify code.
+It reports bugs.
 
-```
-Orchestrator Agent
-├── Coder Agent → Filesystem Server, Git Server
-└── Reviewer Agent → Linter Server, Test Runner
-```
+## Model Requests from Servers
 
-## Sampling-Enabled Agents
+A tool can ask the AI model for help during a task.
+This process is **sampling**.
 
-Sometimes a tool needs to ask the AI model for help during its execution.
-This is called **sampling**.
-
-**Example Scenario: Smart Content Summarizer**
-1. The user calls a `summarize_resource` tool on an MCP server.
-2. The server fetches a very large document from a database.
-3. To summarize it, the server sends a `sampling/createMessage` request back to the client.
+**Scenario example: Smart content summarizer**
+1. The user calls the `summarize_resource` tool.
+2. The server gets a large document from a database.
+3. The server sends a `sampling/createMessage` request to the client.
 4. The client asks the AI model to summarize the text.
-5. The model provides the summary to the server.
-6. The server returns the final summary to the user.
+5. The model sends the summary to the server.
+6. The server sends the summary to the user.
 
-This allows tools to use the AI's reasoning powers directly.
+## Agents with Memory
 
-## Memory-Augmented Agents
+These agents use an MCP server to store information.
+They can use this information in future tasks.
 
-These agents use a specialized MCP server to remember information across different conversations or tasks.
-
-**Example Sequence: Personal Preference Tracking**
-1. **Store**: The user says, "I prefer using Python for backend projects." The agent calls a tool on a **Memory Server** to save this fact.
-2. **Retrieve**: Days later, the user says, "Start a new web project."
-3. **Reason**: The agent first searches its **Memory Server** for "frontend" or "backend" preferences.
-4. **Act**: The agent finds the Python preference and says, "I'll set that up with Python since you mentioned you prefer it."
+**Example: Personal preference tracking**
+1. **Store**: The user says, "I prefer Python for backend projects."
+The agent uses a **Memory Server** to save this information.
+2. **Retrieve**: Later, the user says, "Start a new web project."
+3. **Reason**: The agent searches the **Memory Server** for preferences.
+4. **Act**: The agent finds the preference.
+It says, "I will use Python because you prefer it."
 
 ## Guardrails
 
-When building agents, it is important to set limits to keep them safe and predictable:
-
-- **Limit tool calls**: Stop the agent if it gets stuck in an infinite loop.
-- **Set timeouts**: Don't let a single task run forever.
-- **Human-in-the-loop**: Ask the user for permission before performing sensitive actions (like deleting files or sending emails).
-- **Audit logs**: Record every decision and tool call the agent makes.
-- **Error handling**: Make sure the agent can recover gracefully if a tool fails.
+Use limits to keep agents safe:
+- **Limit tool calls**: Stop the agent if it stays in a loop.
+- **Set timeouts**: Do not let a task run for a long time.
+- **Human-in-the-loop**: Ask the user for permission before a sensitive action.
+For example, ask before the agent deletes a file.
+- **Audit logs**: Record all decisions and tool calls.
+- **Error handling**: Make sure the agent can continue if a tool fails.
