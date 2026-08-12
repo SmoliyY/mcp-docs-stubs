@@ -65,7 +65,12 @@ async function runAgent() {
     { role: "user", content: task }
   ];
 
-  while (true) {
+  const maxSteps = 8;
+  let steps = 0;
+  let reachedMaxSteps = true;
+
+  while (steps < maxSteps) {
+    steps += 1;
     // In a real app, you would pass 'agentContext' and 'tools'
     // to an AI model like Claude to decide the next step.
     const agentAction = await callLLM({
@@ -75,6 +80,7 @@ async function runAgent() {
 
     if (agentAction.type === "text_response") {
       console.log("Agent finished:", agentAction.text);
+      reachedMaxSteps = false;
       break;
     }
 
@@ -95,7 +101,7 @@ async function runAgent() {
           toolCall: agentAction
         });
         agentContext.push({
-          role: "tool_result",
+          role: "tool",
           content: toolResult.content
         });
       } catch (error) {
@@ -105,12 +111,26 @@ async function runAgent() {
     }
   }
 
+  if (reachedMaxSteps) {
+    console.warn("Agent stopped after reaching max steps.");
+  }
+
   await client.close();
 }
 
 // Simplified AI model call
 async function callLLM({ messages, tools }) {
   // A real implementation would use an AI provider's SDK
+  const lastMessage = messages[messages.length - 1];
+  const hasToolResult = lastMessage?.role === "tool";
+
+  if (hasToolResult) {
+    return {
+      type: "text_response",
+      text: "I found matches for 'error' in the project and summarized them."
+    };
+  }
+
   return {
     type: "tool_call",
     toolName: "search_files",
