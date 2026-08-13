@@ -14,42 +14,43 @@ Cloudflare Workers provide a serverless, edge-deployed platform for running MCP 
 ```bash
 npm create cloudflare@latest -- my-mcp-server
 cd my-mcp-server
-npm install @modelcontextprotocol/sdk
+npm install @modelcontextprotocol/sdk zod
 ```
 
 ## Worker Implementation
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { McpAgent } from "agents/mcp";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { z } from "zod";
 
-export class MyMcpServer extends McpAgent {
-  server = new McpServer({
-    name: "cloudflare-mcp",
-    version: "1.0.0"
-  });
+export default {
+  async fetch(request, env) {
+    const server = new McpServer({
+      name: "cloudflare-mcp",
+      version: "1.0.0"
+    });
 
-  async init() {
-    this.server.tool(
+    server.tool(
       "get_data",
       "Fetch data from KV store",
       { key: z.string() },
       async ({ key }) => {
-        const value = await this.env.MY_KV.get(key);
+        const value = await env.MY_KV.get(key);
         return {
           content: [{ type: "text", text: value || "Not found" }]
         };
       }
     );
-  }
-}
 
-export default {
-  fetch(request, env) {
+    const transport = new StreamableHTTPServerTransport({ path: "/mcp" });
+    await server.connect(transport);
+
     const url = new URL(request.url);
     if (url.pathname === "/mcp") {
-      return MyMcpServer.handle(request, env);
+      return transport.handle(request);
     }
+
     return new Response("MCP Server", { status: 200 });
   }
 };
