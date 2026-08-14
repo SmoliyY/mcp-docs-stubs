@@ -14,11 +14,11 @@ User Request → AI Model → Tool Call → MCP Server → Result → AI Model �
 ```
 
 The AI model selects tools.
-It completes tasks that have many steps.
+It completes tasks with many steps.
 
 ## ReAct pattern
 
-The ReAct (Reasoning and Acting) pattern is common.
+The ReAct (Reason and Act) pattern is common.
 The agent thinks about an action.
 It does the action.
 Then, it observes the result.
@@ -40,7 +40,7 @@ The agent repeats this cycle until the task is complete.
 Use the `@modelcontextprotocol/sdk` to build an agent loop in TypeScript.
 This agent connects to a server.
 It finds tools.
-It starts a reasoning cycle.
+It starts a loop to reason and act.
 
 ```typescript
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -66,7 +66,7 @@ async function runAgent() {
   // The agent uses this list to find allowed actions
   const { tools } = await client.listTools();
 
-  // 3. Simple reasoning and action loop
+  // 3. Simple loop to reason and act
   const task = "Search for 'error' in the project and describe the results.";
   let agentContext = [
     { role: "user", content: task }
@@ -152,12 +152,9 @@ Each agent can use its own MCP servers.
 
 ### Scenario example: Software development
 
-- **Orchestrator**: It receives the request from the user.
-  It selects an agent to do the task.
-- **Coder agent**: It uses a **Filesystem Server** to write code.
-  It uses a **Git Server** to commit changes.
-- **Reviewer agent**: It uses a **Linter Server** or **Test Runner** to verify code.
-  It reports bugs.
+- **Orchestrator**: This agent receives the request from the user and selects an agent to do the task.
+- **Coder agent**: This agent uses a **Filesystem Server** to write code and a **Git Server** to commit changes.
+- **Reviewer agent**: This agent uses a **Linter Server** or **Test Runner** to verify code and reports bugs.
 
 ## Model requests from servers
 
@@ -181,11 +178,10 @@ They can use this information in future tasks.
 ### Example: Personal preferences
 
 1. **Store**: The user says, "I prefer Python for backend projects."
-   The agent uses a **Memory Server** to save this information.
-2. **Retrieve**: Later, the user says, "Start a new web project."
-3. **Reason**: The agent searches the **Memory Server** for preferences.
-4. **Act**: The agent finds the preference.
-   It says, "I will use Python because you prefer it."
+2. **Save**: The agent uses a **Memory Server** to save this information.
+3. **Retrieve**: Later, the user says, "Start a new web project."
+4. **Search**: The agent searches the **Memory Server** for preferences.
+5. **Act**: The agent finds the preference and uses it to complete the task.
 
 ## Guardrails
 
@@ -193,6 +189,5 @@ Use limits to keep agents safe:
 - **Limit tool calls**: Stop the agent if it stays in a loop.
 - **Set timeouts**: Do not let a task run for a long time.
 - **Human-in-the-loop**: Ask the user for permission before a sensitive action.
-  For example, ask before the agent deletes a file.
 - **Audit logs**: Record all decisions and tool calls.
 - **Error handling**: Make sure the agent can continue if a tool fails.
