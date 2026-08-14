@@ -1,12 +1,12 @@
-# Agent Patterns
+# Agent patterns
 
 Use the Model Context Protocol (MCP) to build different types of AI agents.
 MCP provides a standard way for agents to interact with their environment.
 These agents can be simple or complex.
 
-## Agents and Tools
+## Agents and tools
 
-This pattern is the most simple.
+This pattern is the simplest.
 An AI model uses MCP tools to do tasks.
 
 ```
@@ -16,9 +16,9 @@ User Request → AI Model → Tool Call → MCP Server → Result → AI Model �
 The AI model selects tools.
 It completes tasks that have many steps.
 
-## ReAct Pattern
+## ReAct pattern
 
-The Reasoning and Acting (ReAct) pattern is common.
+The ReAct (Reasoning and Acting) pattern is common.
 The agent thinks about an action.
 It does the action.
 Then, it observes the result.
@@ -35,7 +35,7 @@ Think: The issue is in line 42...
 
 The agent repeats this cycle until the task is complete.
 
-## Implementation Example
+## Implementation example
 
 Use the `@modelcontextprotocol/sdk` to build an agent loop in TypeScript.
 This agent connects to a server.
@@ -145,25 +145,27 @@ async function callLLM({ messages, tools }) {
 }
 ```
 
-## Multi-Agent Systems
+## Multi-agent systems
 
 A multi-agent system divides a complex task between different agents.
 Each agent can use its own MCP servers.
 
-**Scenario example: Software development**
-- **Orchestrator**: It receives the request from the user.
-It selects an agent to do the task.
-- **Coder agent**: It uses a **Filesystem Server** to write code.
-It uses a **Git Server** to commit changes.
-- **Reviewer agent**: It uses a **Linter Server** or **Test Runner** to verify code.
-It reports bugs.
+### Scenario example: Software development
 
-## Model Requests from Servers
+- **Orchestrator**: It receives the request from the user.
+  It selects an agent to do the task.
+- **Coder agent**: It uses a **Filesystem Server** to write code.
+  It uses a **Git Server** to commit changes.
+- **Reviewer agent**: It uses a **Linter Server** or **Test Runner** to verify code.
+  It reports bugs.
+
+## Model requests from servers
 
 A tool can ask the AI model for help during a task.
 This process is **sampling**.
 
-**Scenario example: Smart content summarizer**
+### Scenario example: Smart content summarizer
+
 1. The user calls the `summarize_resource` tool.
 2. The server gets a large document from a database.
 3. The server sends a `sampling/createMessage` request to the client.
@@ -171,18 +173,19 @@ This process is **sampling**.
 5. The model sends the summary to the server.
 6. The server sends the summary to the user.
 
-## Agents with Memory
+## Agents with memory
 
 These agents use an MCP server to store information.
 They can use this information in future tasks.
 
-**Example: Personal preference tracking**
+### Example: Personal preferences
+
 1. **Store**: The user says, "I prefer Python for backend projects."
-The agent uses a **Memory Server** to save this information.
+   The agent uses a **Memory Server** to save this information.
 2. **Retrieve**: Later, the user says, "Start a new web project."
 3. **Reason**: The agent searches the **Memory Server** for preferences.
 4. **Act**: The agent finds the preference.
-It says, "I will use Python because you prefer it."
+   It says, "I will use Python because you prefer it."
 
 ## Guardrails
 
@@ -190,6 +193,6 @@ Use limits to keep agents safe:
 - **Limit tool calls**: Stop the agent if it stays in a loop.
 - **Set timeouts**: Do not let a task run for a long time.
 - **Human-in-the-loop**: Ask the user for permission before a sensitive action.
-For example, ask before the agent deletes a file.
+  For example, ask before the agent deletes a file.
 - **Audit logs**: Record all decisions and tool calls.
 - **Error handling**: Make sure the agent can continue if a tool fails.
