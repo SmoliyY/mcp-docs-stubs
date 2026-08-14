@@ -1,4 +1,4 @@
-# Agent Patterns with MCP
+# Agent Patterns with MCP add
 
 MCP provides the foundation for building sophisticated AI agent architectures. Here are common patterns.
 
