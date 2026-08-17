@@ -1,4 +1,4 @@
-# Defining MCP Resources
+# Define MCP resources
 
 This guide covers how to create resources in MCP servers.
 
@@ -41,6 +41,48 @@ server.resource(
 );
 ```
 
+## TypeScript — Binary Content
+
+For resources containing binary data, use the `blob` property in the `contents` array.
+The binary content must be encoded as a base64 string.
+You must also specify the appropriate `mimeType` for the content, such as `image/png` for images.
+
+```typescript
+server.resource(
+  "logo",
+  "assets://logo.png",
+  async (uri) => ({
+    contents: [{
+      uri: uri.href,
+      mimeType: "image/png",
+      blob: (await fs.readFile("logo.png")).toString("base64")
+    }]
+  })
+);
+```
+
+## TypeScript parameters
+
+The `server.resource()` method uses three main parameters to set up a resource:
+
+{% table %}
+* Parameter
+* Type
+* Description
+---
+* `name`
+* `string`
+* A unique name to identify this resource, such as `"readme"` or `"logo"`.
+---
+* `uri / template`
+* `string | ResourceTemplate`
+* Either a fixed address (like `"assets://logo.png"`) or a pattern used to create addresses for dynamic resources.
+---
+* `handler`
+* `Function`
+* A function that gets and returns the resource content when it is requested.
+{% /table %}
+
 ## Python — Static Resource
 
 ```python
@@ -63,22 +105,6 @@ def get_table_schema(table_name: str) -> str:
     """Get the schema for a database table."""
     schema = db.get_schema(table_name)
     return json.dumps(schema)
-```
-
-## Resource with Binary Content
-
-```typescript
-server.resource(
-  "logo",
-  "assets://logo.png",
-  async (uri) => ({
-    contents: [{
-      uri: uri.href,
-      mimeType: "image/png",
-      blob: (await fs.readFile("logo.png")).toString("base64")
-    }]
-  })
-);
 ```
 
 ## Best Practices
