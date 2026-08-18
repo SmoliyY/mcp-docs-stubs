@@ -14,42 +14,59 @@ Cloudflare Workers provide a serverless, edge-deployed platform for running MCP 
 ```bash
 npm create cloudflare@latest -- my-mcp-server
 cd my-mcp-server
-npm install @modelcontextprotocol/sdk
+npm install @modelcontextprotocol/sdk zod
 ```
 
 ## Worker Implementation
 
+The following implementation demonstrates how to set up an MCP server within a Cloudflare Worker.
+It uses the `@modelcontextprotocol/sdk` to define the server and its capabilities.
+The server employs the `StreamableHTTPServerTransport` to handle communication over HTTP.
+
+The implementation initializes the MCP server, defines tools, and sets up the transport to handle incoming requests at a specific path.
+This example specifically shows a tool that interacts with Cloudflare KV storage.
+
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { McpAgent } from "agents/mcp";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { z } from "zod";
 
-export class MyMcpServer extends McpAgent {
-  server = new McpServer({
-    name: "cloudflare-mcp",
-    version: "1.0.0"
-  });
+export default {
+  async fetch(request, env) {
+    // Initialize the MCP server with basic metadata
+    const server = new McpServer({
+      name: "cloudflare-mcp",
+      version: "1.0.0"
+    });
 
-  async init() {
-    this.server.tool(
+    // Register a tool that can be called by clients.
+    // In this example, it fetches data from a Cloudflare KV namespace.
+    server.tool(
       "get_data",
       "Fetch data from KV store",
       { key: z.string() },
       async ({ key }) => {
-        const value = await this.env.MY_KV.get(key);
+        const value = await env.MY_KV.get(key);
         return {
           content: [{ type: "text", text: value || "Not found" }]
         };
       }
     );
-  }
-}
 
-export default {
-  fetch(request, env) {
+    // Set up the Streamable HTTP transport.
+    // Cloudflare Workers use this transport for HTTP-based communication.
+    const transport = new StreamableHTTPServerTransport({ path: "/mcp" });
+
+    // Connect the server to the transport
+    await server.connect(transport);
+
+    // Route requests to the MCP transport.
+    // Ensure the request path matches the one defined in the transport.
     const url = new URL(request.url);
     if (url.pathname === "/mcp") {
-      return MyMcpServer.handle(request, env);
+      return transport.handle(request);
     }
+
     return new Response("MCP Server", { status: 200 });
   }
 };
