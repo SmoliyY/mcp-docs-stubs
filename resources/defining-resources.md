@@ -61,7 +61,7 @@ server.resource(
 );
 ```
 
-## TypeScript parameters
+## TypeScript — Resource parameters
 
 The `server.resource()` method uses three main parameters to set up a resource:
 
