@@ -1,47 +1,69 @@
-# MCP Authentication and Authorization
+# Authentication
 
-MCP uses **OAuth 2.0** for authentication and authorization of remote servers. This was significantly enhanced in the 2025-06-18 and 2025-11-25 specifications.
+The Model Context Protocol (MCP) uses OAuth 2.0 to handle authentication and authorization for remote servers.
+This ensures that only authorized clients can access sensitive resources and tools.
+We updated how authentication works in the June 18, 2025, and November 25, 2025, versions of the specification.
 
-## When Auth Is Needed
+## Authentication Needs
 
-- **stdio transport**: Usually no auth needed (local process, inherits user's permissions)
-- **Streamable HTTP**: Auth required for remote/multi-tenant servers
+Whether you need authentication depends on how your client and server communicate:
 
-## OAuth 2.0 Flow
+- **Local (stdio)**:
+  If you run a server locally via `stdio`, you usually do not need authentication.
+  The server inherits the permissions of the user who runs it.
+- **Remote (HTTP)**:
+  If you connect to a remote server over HTTP (specifically Streamable HTTP), you almost always need to authenticate to keep the connection secure.
 
-MCP servers act as **OAuth Resource Servers**. The authorization flow:
+## Authentication Process
 
-1. Client discovers the server's auth requirements
-2. Client obtains an access token from the authorization server
-3. Client includes the token in requests via the `Authorization` header
+At a high level, MCP servers act as OAuth Resource Servers.
+The basic flow follows these steps:
+
+1. The client finds out what authentication the server requires.
+2. The client gets an access token from an Authorization Server.
+3. The client includes that token in the `Authorization` header when it makes requests to the MCP server.
 
 ```http
 POST /mcp HTTP/1.1
-Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
+Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
-## Key Auth Features
+## Key Features
 
-### Resource Indicators (RFC 8707)
-Clients use resource indicators to specify which MCP server the token is intended for. This prevents a malicious server from using tokens meant for another server.
+### Resource Indicators
 
-### Incremental Scope Consent (2025-11-25)
-Servers can request additional permissions mid-session without requiring a full re-authorization flow.
+Clients use "resource indicators" (from RFC 8707) to specify which MCP server they want to access.
+This helps prevent a token meant for one server from being used on another.
 
-### OpenID Connect Discovery (2025-11-25)
-Servers can use OIDC Discovery to advertise their auth configuration, simplifying client setup.
+### Dynamic Client Identification
+
+The November 2025 update added support for Dynamic Client Registration and Client ID Metadata (CIMD).
+
+**Note:** Dynamic Client Registration is now considered legacy.
+You should use Client ID Metadata (CIMD) for dynamic identification instead.
+CIMD lets clients identify themselves using a metadata document instead of a fixed, static client ID.
+
+### Incremental Scope Consent
+
+Servers can ask for more permissions in the middle of a session.
+The client does not have to restart the whole authorization process to grant one more scope.
+
+### OIDC Discovery
+
+Servers can use OpenID Connect (OIDC) Discovery to tell clients how they should authenticate.
 
 ## Authorization Server Metadata
 
-Servers expose their auth requirements at:
+Servers reveal their authentication requirements at a standard location:
+
 ```
 GET /.well-known/oauth-authorization-server
 ```
 
-## Security Requirements
+## Security Best Practices
 
-- Clients MUST validate tokens before use
-- Servers MUST verify tokens on every request
-- Tokens SHOULD have limited scopes and lifetimes
-- HTTPS is required for all auth-related communication
+- Always validate tokens before you use them.
+- Servers should verify the token on every single request.
+- Keep token lifetimes short and scopes as narrow as possible.
+- Use HTTPS for all authentication traffic.
