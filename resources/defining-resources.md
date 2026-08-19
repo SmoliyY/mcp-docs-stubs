@@ -5,6 +5,7 @@ This guide covers how to create resources in MCP servers.
 ## TypeScript — Static Resource
 
 ```typescript
+import fs from "node:fs/promises";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 const server = new McpServer({ name: "docs-server", version: "1.0.0" });
@@ -26,6 +27,7 @@ server.resource(
 ## TypeScript — Dynamic Resource Template
 
 ```typescript
+import fs from "node:fs/promises";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 server.resource(
@@ -34,7 +36,7 @@ server.resource(
   async (uri, { path }) => ({
     contents: [{
       uri: uri.href,
-      mimeType: getMimeType(path),
+      mimeType: "text/plain",
       text: await fs.readFile(path, "utf-8")
     }]
   })
@@ -48,6 +50,8 @@ The binary content must be encoded as a base64 string.
 You must also specify the appropriate `mimeType` for the content, such as `image/png` for images.
 
 ```typescript
+import fs from "node:fs/promises";
+
 server.resource(
   "logo",
   "assets://logo.png",
@@ -74,14 +78,23 @@ The `server.resource()` method uses three main parameters to set up a resource:
 * `string`
 * A unique name to identify this resource, such as `"readme"` or `"logo"`.
 ---
-* `uri / template`
+* `uriOrTemplate`
 * `string | ResourceTemplate`
-* Either a fixed address (like `"assets://logo.png"`) or a pattern used to create addresses for dynamic resources.
+* Either a fixed URI string or a `ResourceTemplate` instance for dynamic resources.
 ---
 * `handler`
 * `Function`
 * A function that gets and returns the resource content when it is requested.
 {% /table %}
+
+### The Resource Handler
+
+The handler function receives the following arguments:
+
+1.  **uri** (`URL`): The full URI of the requested resource.
+2.  **variables** (`object`): An object containing values for any variables defined in the resource template.
+
+The handler should return a `Promise` that resolves to an object containing a `contents` array.
 
 ## Best Practices
 
