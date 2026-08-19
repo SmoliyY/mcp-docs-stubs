@@ -1,56 +1,68 @@
 # MCP on Cloudflare Workers
 
-Cloudflare Workers provide a serverless, edge-deployed platform for running MCP servers with built-in support.
+Cloudflare Workers provide a serverless, edge-deployed platform for running MCP servers.
 
 ## Why Cloudflare Workers?
 
 - **Global edge deployment** — Low latency worldwide
 - **Serverless** — No infrastructure to manage
-- **Built-in MCP support** — Native Streamable HTTP transport
+- **Streamable HTTP support** — Efficient bidirectional communication over HTTP
 - **OAuth integration** — Authentication handled at the edge
 
-## Getting Started
+## Get started
 
 ```bash
 npm create cloudflare@latest -- my-mcp-server
 cd my-mcp-server
-npm install @modelcontextprotocol/sdk
+npm install @modelcontextprotocol/sdk zod
 ```
 
-## Worker Implementation
+## Worker implementation
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { McpAgent } from "agents/mcp";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { z } from "zod";
 
-export class MyMcpServer extends McpAgent {
-  server = new McpServer({
-    name: "cloudflare-mcp",
-    version: "1.0.0"
-  });
+const server = new McpServer({
+  name: "cloudflare-mcp",
+  version: "1.0.0"
+});
 
-  async init() {
-    this.server.tool(
-      "get_data",
-      "Fetch data from KV store",
-      { key: z.string() },
-      async ({ key }) => {
-        const value = await this.env.MY_KV.get(key);
-        return {
-          content: [{ type: "text", text: value || "Not found" }]
-        };
-      }
-    );
+server.tool(
+  "get_data",
+  "Fetch data from KV store",
+  { key: z.string() },
+  async ({ key }, { env }) => {
+    // Access Workers environment via the context object
+    const value = await env.MY_KV.get(key);
+    return {
+      content: [{ type: "text", text: value || "Not found" }]
+    };
   }
-}
+);
+
+// Define the transport outside the fetch handler to reuse it
+let transport: StreamableHTTPServerTransport | null = null;
 
 export default {
-  fetch(request, env) {
+  async fetch(request, env) {
+    if (!transport) {
+      transport = new StreamableHTTPServerTransport({ path: "/mcp" });
+      await server.connect(transport);
+    }
+
     const url = new URL(request.url);
     if (url.pathname === "/mcp") {
-      return MyMcpServer.handle(request, env);
+      // Streamable HTTP handles GET (for SSE) and POST (for messages)
+      if (request.method === "GET") {
+        return transport.handleGet(request, { env });
+      } else if (request.method === "POST") {
+        return transport.handlePost(request, { env });
+      }
     }
-    return new Response("MCP Server", { status: 200 });
+
+    return new Response("MCP Server Running", { status: 200 });
   }
 };
 ```
@@ -61,7 +73,7 @@ export default {
 npx wrangler deploy
 ```
 
-## Features Available on Workers
+## Workers features
 
 - **KV Storage** — Key-value data access
 - **D1 Database** — SQL database queries
@@ -69,7 +81,7 @@ npx wrangler deploy
 - **AI** — Run AI models at the edge
 - **Durable Objects** — Stateful sessions
 
-## Configuration in Clients
+## Client configuration
 
 ```json
 {
