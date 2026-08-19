@@ -83,30 +83,6 @@ The `server.resource()` method uses three main parameters to set up a resource:
 * A function that gets and returns the resource content when it is requested.
 {% /table %}
 
-## Python — Static Resource
-
-```python
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP("docs-server")
-
-@mcp.resource("file:///project/README.md")
-def get_readme() -> str:
-    """The project README file."""
-    with open("/project/README.md") as f:
-        return f.read()
-```
-
-## Python — Dynamic Resource
-
-```python
-@mcp.resource("db://tables/{table_name}/schema")
-def get_table_schema(table_name: str) -> str:
-    """Get the schema for a database table."""
-    schema = db.get_schema(table_name)
-    return json.dumps(schema)
-```
-
 ## Best Practices
 
 - Use descriptive resource names
