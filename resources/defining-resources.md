@@ -1,4 +1,4 @@
-# Defining MCP Resources add
+# Defining MCP Resources
  
 This guide covers how to create resources in MCP servers.
 
