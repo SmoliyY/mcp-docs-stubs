@@ -3,7 +3,7 @@
 This tutorial shows how to build a simple MCP client that connects to servers and invokes tools.
 
 ## TypeScript Client
-231231
+231231dasd
 ```typescript
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
