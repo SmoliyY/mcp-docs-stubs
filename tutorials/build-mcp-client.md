@@ -69,6 +69,6 @@ main().catch(console.error);
 | `listPrompts()` | Discover available prompts |
 | `getPrompt(name, args)` | Get a prompt template |
 
-## Error Handling
+## Handle Errors
 
 Always wrap tool calls in try/catch — servers may return errors or become unavailable.

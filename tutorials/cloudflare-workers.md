@@ -9,48 +9,56 @@ Cloudflare Workers provide a serverless, edge-deployed platform for running MCP 
 - **Built-in MCP support** — Native Streamable HTTP transport
 - **OAuth integration** — Authentication handled at the edge
 
-## Getting Started
+## Get Started
 
 ```bash
 npm create cloudflare@latest -- my-mcp-server
 cd my-mcp-server
-npm install @modelcontextprotocol/sdk
+npm install @modelcontextprotocol/sdk zod
 ```
 
 ## Worker Implementation
 
+Implement your MCP server using `McpServer` and `StreamableHTTPServerTransport`.
+
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { McpAgent } from "agents/mcp";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { z } from "zod";
 
-export class MyMcpServer extends McpAgent {
-  server = new McpServer({
-    name: "cloudflare-mcp",
-    version: "1.0.0"
-  });
+const server = new McpServer({
+  name: "cloudflare-mcp",
+  version: "1.0.0"
+});
 
-  async init() {
-    this.server.tool(
-      "get_data",
-      "Fetch data from KV store",
-      { key: z.string() },
-      async ({ key }) => {
-        const value = await this.env.MY_KV.get(key);
-        return {
-          content: [{ type: "text", text: value || "Not found" }]
-        };
-      }
-    );
+server.tool(
+  "get_data",
+  "Fetch data from KV store",
+  { key: z.string() },
+  async ({ key }, { env }) => {
+    // Access Workers bindings from the context
+    const value = await (env as any).MY_KV.get(key);
+    return {
+      content: [{ type: "text", text: value || "Not found" }]
+    };
   }
-}
+);
+
+const transport = new StreamableHTTPServerTransport({ path: "/mcp" });
+
+// Connect the server to the transport
+const connected = server.connect(transport);
 
 export default {
-  fetch(request, env) {
+  async fetch(request, env) {
+    await connected;
+
     const url = new URL(request.url);
     if (url.pathname === "/mcp") {
-      return MyMcpServer.handle(request, env);
+      if (request.method === "POST") return transport.handlePost(request, { env });
+      if (request.method === "GET") return transport.handleGet(request, { env });
     }
-    return new Response("MCP Server", { status: 200 });
+    return new Response("Not found", { status: 404 });
   }
 };
 ```
