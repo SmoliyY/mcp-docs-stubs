@@ -4,7 +4,7 @@ The **2025-11-25** specification introduced SEP-1024, defining security requirem
 
 ## Threat Model
 
-Local MCP servers run as processes on the user's machine, inheriting tadadadhe user's permissions. This creates risks:
+Local MCP servers run as processes on the user's machine, inheriting the user's permissions. This creates risks:
 
 - **Malicious servers** could access the user's files, credentials, or network
 - **Compromised servers** could exfiltrate data through tool results

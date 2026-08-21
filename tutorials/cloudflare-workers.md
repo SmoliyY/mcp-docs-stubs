@@ -4,10 +4,10 @@ Cloudflare Workers provide a serverless, edge-deployed platform for running MCP 
 
 ## Benefits of Cloudflare Workers
 
-- **Global edge deployment** — Low latency worldwide.
-- **Serverless** — No infrastructure to manage.
-- **Streamable HTTP support** — Efficient bidirectional communication over HTTP.
-- **OAuth integration** — Authentication handled at the edge.
+- **Global edge deployment** — Low latency worldwide
+- **Serverless** — No infrastructure to manage
+- **Streamable HTTP support** — Efficient bidirectional communication over HTTP
+- **OAuth integration** — Authentication handled at the edge
 
 ## Get started
 
@@ -75,11 +75,11 @@ npx wrangler deploy
 
 ## Workers features
 
-- **KV Storage** — Key-value data access.
-- **D1 Database** — SQL database queries.
-- **R2 Storage** — Object/file storage.
-- **AI** — Run AI models at the edge.
-- **Durable Objects** — Stateful sessions.
+- **KV Storage** — Key-value data access
+- **D1 Database** — SQL database queries
+- **R2 Storage** — Object/file storage
+- **AI** — Run AI models at the edge
+- **Durable Objects** — Stateful sessions
 
 ## Client configuration
 
