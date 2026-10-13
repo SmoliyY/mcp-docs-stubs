@@ -69,6 +69,10 @@ server.tool("import_data", "Import a CSV file", {
     }
   }
 
+  if (token) {
+    await server.sendProgress(token, rows.length, rows.length);
+  }
+
   return {
     content: [{ type: "text", text: `Imported ${rows.length} rows` }]
   };
@@ -81,3 +85,4 @@ server.tool("import_data", "Import a CSV file", {
 - Send updates at reasonable intervals (not every iteration).
 - Progress values must strictly increase with each notification.
 - For indeterminate progress where the total size is unknown, omit the `total` field.
+- Send a final notification where `progress` equals `total` to indicate completion.
