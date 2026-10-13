@@ -39,18 +39,6 @@ GET /authorize?
   resource=https://mcp-server.example.com
 ```
 
-### Error Responses
-
-If the authorization request is invalid or the user denies the request, the server redirects back to the `redirect_uri` with error parameters.
-For example, if the requested scope is unsupported, the server returns an `invalid_scope` error:
-
-```
-GET /callback?
-  error=invalid_scope&
-  error_description=The+requested+scope+is+invalid+or+unsupported.&
-  state=xyz123
-```
-
 ### Step 2: Token Exchange
 ```http
 POST /token HTTP/1.1
