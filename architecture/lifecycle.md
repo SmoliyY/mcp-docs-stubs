@@ -43,7 +43,7 @@ The client sends its preferred `protocolVersion` in the request.
 **Client behavior:**
 
 - Upon receiving the server's response, the client MUST check the `protocolVersion` returned by the server.
-- If the client cannot support the version returned by the server, it MUST NOT send the `initialized` notification and SHOULD instead close the connection.
+- If the client cannot support the version returned by the server, it MUST NOT send the `initialized` notification and MUST instead close the connection.
 
 ### 2. Initialized Notification
 
@@ -89,6 +89,13 @@ If no requests are received within the timeout period, the server may terminate 
 
 ## Error handling
 
-If initialization fails (e.g., due to version mismatch or transport error), the client should retry with exponential backoff.
+If initialization fails, the error handling strategy depends on the failure type:
+
+- **Transport errors:**
+  For failures such as connection timeouts or network disruptions, the client should retry the initialization process with exponential backoff.
+- **Protocol version mismatch:**
+  If the server returns a protocol version that the client does not support, the client MUST close the connection.
+  The client should not retry with the same version.
+
 Servers must respond to `initialize` before accepting any other protocol requests.
 Requests received before initialization should be rejected with an appropriate JSON-RPC error.
