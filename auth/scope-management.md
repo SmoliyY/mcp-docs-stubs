@@ -1,6 +1,7 @@
 # OAuth Scope Management
 
-Scopes control what actions an MCP client can perform on behalf of the user. Proper scope management is essential for security.
+Scopes control what actions an MCP client can perform on behalf of the user.
+Proper scope management is essential for security.
 
 ## What Are Scopes?
 
@@ -23,6 +24,22 @@ GET /authorize?
   scope=read+write+tools:execute
   ...
 ```
+
+## Error Handling
+
+### Invalid Scopes
+
+If a client requests a scope that is unsupported, malformed, or otherwise invalid, the authorization server may return an `invalid_scope` error.
+Clients should be prepared to handle this error by either requesting a different set of scopes or informing the user of the configuration issue.
+
+## Partial Scope Grants
+
+The authorization server may not grant all requested scopes.
+The user may choose to deny certain permissions, or the server's policy may restrict which scopes can be granted to a particular client.
+
+When the client receives the token response, it should inspect the `scope` field.
+The `scope` field in the response contains the list of scopes actually granted, which may be narrower than what was requested.
+Clients must verify that they have the necessary permissions before attempting to perform actions that require specific scopes.
 
 ## Default Scopes (SEP-835)
 
@@ -67,6 +84,7 @@ The client prompts the user to grant the additional permissions.
 - Explain what each scope means
 - Allow users to deny individual scopes
 - Track granted scopes per server
+- Check the `scope` field in the token response to handle partial grants
 
 ## Scope Naming Convention
 
