@@ -1,6 +1,7 @@
 # Transport Selection for Clients
 
-Choosing the right transport is important for client implementations. This guide helps you decide.
+Choosing the right transport is important for client implementations.
+This guide helps you decide.
 
 ## Decision Flow
 
@@ -56,6 +57,11 @@ const transport = new StreamableHTTPClientTransport(
   }
 );
 ```
+
+> [!WARNING]
+> **Session Persistence**
+> For Streamable HTTP, the server typically issues a session ID in the `Mcp-Session-Id` header during initialization.
+> You must persist this ID and include it in the `Mcp-Session-Id` header for all subsequent requests to maintain the session.
 
 ## Fallback Strategy
 
