@@ -4,9 +4,9 @@ MCP supports progress reporting for long-running operations, giving users visibi
 
 ## How It Works
 
-1. Client includes a `progressToken` in the request metadata
-2. Server sends `notifications/progress` with updates
-3. Client displays progress to the user
+1. Client includes a `progressToken` in the request metadata.
+2. Server sends `notifications/progress` with updates.
+3. Client displays progress to the user.
 
 ## Initiating Progress Tracking
 
@@ -49,8 +49,8 @@ Server sends periodic progress notifications:
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `progressToken` | string/number | Yes | Matches the request's token |
-| `progress` | number | Yes | Current progress value |
-| `total` | number | No | Total expected value |
+| `progress` | number | Yes | Current progress value (must be strictly increasing) |
+| `total` | number | No | Total expected value (omit for indeterminate progress) |
 | `message` | string | No | Human-readable status |
 
 ## TypeScript Example
@@ -77,6 +77,7 @@ server.tool("import_data", "Import a CSV file", {
 
 ## Notes
 
-- Progress tokens are optional — servers must check if one was provided
-- Send updates at reasonable intervals (not every iteration)
-- The `total` field may be unknown at the start
+- Progress tokens are optional — servers must check if one was provided.
+- Send updates at reasonable intervals (not every iteration).
+- Progress values must strictly increase with each notification.
+- For indeterminate progress where the total size is unknown, omit the `total` field.
