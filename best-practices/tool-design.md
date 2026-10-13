@@ -64,3 +64,32 @@ Return errors the LLM can understand and act on:
 - Prefer **focused tools** that do one thing well
 - Avoid mega-tools with many modes
 - Split complex operations into steps the LLM can orchestrate
+
+## Tool Annotations
+
+Use annotations to provide metadata that helps MCP clients optimize the user experience.
+The most important annotations for UX are `readOnlyHint` and `destructiveHint`.
+
+- **`readOnlyHint`**: Indicates that the tool only reads data and does not modify any state.
+  Clients can use this to auto-approve tool execution, reducing user friction.
+- **`destructiveHint`**: Indicates that the tool performs a destructive operation (like deleting a file or dropping a table).
+  Clients should use this to display a confirmation dialog before execution.
+
+```json
+{
+  "name": "delete_file",
+  "description": "Delete a file from the filesystem",
+  "annotations": {
+    "destructiveHint": true
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "path": { "type": "string" }
+    },
+    "required": ["path"]
+  }
+}
+```
+
+For a full list of available annotations, see the [Tool Annotations](../tools/tool-annotations.md) guide.
