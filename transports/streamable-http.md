@@ -4,7 +4,8 @@
 
 ## How It Works
 
-The server exposes a single HTTP endpoint (e.g., `/mcp`). Communication uses:
+The server exposes a single HTTP endpoint (e.g., `/mcp`).
+Communication uses:
 
 - **POST requests** — Client sends messages to the server
 - **GET requests** — Client opens an SSE stream for server-initiated messages
@@ -31,13 +32,18 @@ Opens a persistent SSE connection for server-initiated messages (notifications, 
 
 ## Session Management
 
-Servers can issue a session ID via the `Mcp-Session-Id` header:
+The `Mcp-Session-Id` header is used to maintain stateful communication between a client and a server.
+
+### Session ID Lifecycle
+
+The server typically first issues a session ID via the `Mcp-Session-Id` header in the response to the `initialize` request.
+Clients MUST persist this ID and include it in the `Mcp-Session-Id` header for all subsequent POST and GET requests in that session.
 
 ```http
 Mcp-Session-Id: abc123-def456
 ```
 
-Clients include this header in subsequent requests to maintain session state.
+If the client fails to return the session ID, the server may treat the request as a new session or reject it if a session is required.
 
 ## Advantages Over HTTP+SSE
 
