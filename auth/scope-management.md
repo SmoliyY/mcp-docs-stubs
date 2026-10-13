@@ -84,7 +84,6 @@ The client prompts the user to grant the additional permissions.
 - Explain what each scope means
 - Allow users to deny individual scopes
 - Track granted scopes per server
-- Check the `scope` field in the token response to handle partial grants
 
 ## Scope Naming Convention
 
