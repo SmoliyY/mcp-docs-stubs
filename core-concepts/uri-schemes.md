@@ -1,16 +1,22 @@
 # URI Schemes in MCP
 
-Resources in MCP are identified by **URIs** (Uniform Resource Identifiers). Understanding URI schemes is important for resource design.
+Resources in MCP are identified by **URIs** (Uniform Resource Identifiers).
+Understanding URI schemes is important for resource design.
 
 ## Standard Schemes
 
 ### `file://` — Local Files
+
 ```
 file:///home/user/documents/report.md
 file:///C:/Users/user/docs/report.md    (Windows)
 ```
 
+Special characters in file paths, such as spaces, must be percent-encoded.
+For example, a file path like `/home/user/My Documents/report.md` becomes `file:///home/user/My%20Documents/report.md`.
+
 ### `https://` — Web Resources
+
 ```
 https://api.example.com/data/users
 ```
@@ -20,6 +26,7 @@ https://api.example.com/data/users
 MCP servers can define custom URI schemes for their resources:
 
 ### Database Resources
+
 ```
 postgres://localhost/mydb/users/schema
 sqlite:///path/to/db/users
@@ -27,6 +34,7 @@ db://production/orders/recent
 ```
 
 ### Application-Specific
+
 ```
 github://owner/repo/issues/123
 slack://workspace/channel/general
@@ -34,6 +42,7 @@ jira://project/PROJ-123
 ```
 
 ### Internal
+
 ```
 memory://knowledge-graph
 config://app/settings
@@ -50,6 +59,8 @@ db://users/{userId}
 github://{owner}/{repo}/issues/{number}
 api://v2/{endpoint}?filter={filter}
 ```
+
+Clients discover concrete resources through the `resources/list` method and discover templates through the `resources/templates/list` method.
 
 ## Best Practices
 
