@@ -5,33 +5,49 @@ Robust error recovery ensures MCP integrations remain reliable even when things 
 ## Connection Recovery
 
 ### stdio Transport
-If the server process crashes:
+
+When a server process crashes, the host application should attempt to reconnect using exponential backoff.
+This prevents the host from entering a tight loop of failed process spawns.
 
 ```typescript
 class ResilientConnection {
   private retryCount = 0;
-  private maxRetries = 3;
+  private maxRetries = 5;
 
-  async connect() {
+  async connect(config: StdioServerParameters) {
     while (this.retryCount < this.maxRetries) {
       try {
-        const transport = new StdioClientTransport(this.config);
+        const transport = new StdioClientTransport(config);
         await this.client.connect(transport);
+        
+        // Reset retry count on successful connection
         this.retryCount = 0;
+
+        // Monitor for unexpected exit after successful connection
+        transport.onClose = () => {
+          console.error("Server process exited unexpectedly");
+          this.connect(config);
+        };
+        
         return;
       } catch (error) {
         this.retryCount++;
+        if (this.retryCount >= this.maxRetries) {
+          throw new Error(`Failed to connect after ${this.maxRetries} attempts: ${error}`);
+        }
+
         const delay = Math.min(1000 * Math.pow(2, this.retryCount), 30000);
+        console.warn(`Connection failed, retrying in ${delay}ms...`);
         await sleep(delay);
       }
     }
-    throw new Error("Max retries exceeded");
   }
 }
 ```
 
 ### HTTP Transport
-Handle network interruptions:
+
+Handle network interruptions by monitoring the connection state and reconnecting when the stream closes.
 
 ```typescript
 // Reconnect SSE stream on close
@@ -45,6 +61,9 @@ transport.onClose = async () => {
 ## Tool Call Recovery
 
 ### Retry Idempotent Tools
+
+For tools that are safe to call multiple times (idempotent), implement a retry mechanism for transient errors.
+
 ```typescript
 async function callToolWithRetry(client, name, args, maxRetries = 2) {
   for (let i = 0; i <= maxRetries; i++) {
@@ -59,7 +78,8 @@ async function callToolWithRetry(client, name, args, maxRetries = 2) {
 ```
 
 ### Handle Partial Failures
-When a tool partially completes:
+
+When a tool performs a batch operation, it should return detailed information about which items succeeded and which failed.
 
 ```typescript
 server.tool("batch_process", "Process items", { items: z.array(z.string()) },
@@ -88,7 +108,7 @@ server.tool("batch_process", "Process items", { items: z.array(z.string()) },
 
 ## Circuit Breaker Pattern
 
-Prevent cascading failures by stopping calls to a failing server:
+Prevent cascading failures by stopping calls to a failing server for a period of time.
 
 ```typescript
 class CircuitBreaker {
