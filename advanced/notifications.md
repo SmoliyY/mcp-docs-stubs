@@ -6,7 +6,6 @@ Both clients and servers can send notifications to inform the other side of even
 ## Server → Client Notifications
 
 ### Resource Updated
-
 ```json
 {
   "method": "notifications/resources/updated",
@@ -15,7 +14,6 @@ Both clients and servers can send notifications to inform the other side of even
 ```
 
 ### Resource List Changed
-
 ```json
 {
   "method": "notifications/resources/list_changed"
@@ -23,7 +21,6 @@ Both clients and servers can send notifications to inform the other side of even
 ```
 
 ### Tool List Changed
-
 ```json
 {
   "method": "notifications/tools/list_changed"
@@ -31,7 +28,6 @@ Both clients and servers can send notifications to inform the other side of even
 ```
 
 ### Prompt List Changed
-
 ```json
 {
   "method": "notifications/prompts/list_changed"
@@ -39,7 +35,6 @@ Both clients and servers can send notifications to inform the other side of even
 ```
 
 ### Log Message
-
 ```json
 {
   "method": "notifications/message",
@@ -52,7 +47,6 @@ Both clients and servers can send notifications to inform the other side of even
 ```
 
 ### Progress
-
 ```json
 {
   "method": "notifications/progress",
@@ -68,7 +62,6 @@ Both clients and servers can send notifications to inform the other side of even
 ## Client → Server Notifications
 
 ### Initialized
-
 ```json
 {
   "method": "notifications/initialized"
@@ -76,7 +69,6 @@ Both clients and servers can send notifications to inform the other side of even
 ```
 
 ### Roots Changed
-
 ```json
 {
   "method": "notifications/roots/list_changed"
