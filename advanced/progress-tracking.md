@@ -53,6 +53,32 @@ Server sends periodic progress notifications:
 | `total` | number | No | Total expected value |
 | `message` | string | No | Human-readable status |
 
+## Request Cancellation
+
+The core MCP specification does not provide a built-in mechanism for cancelling a standard request (like a tool call) once it has started, even if it is reporting progress.
+
+### Standard Requests
+
+While standard JSON-RPC 2.0 implementations sometimes use `$/cancel`, MCP does not formalize this notification for standard requests.
+If a client needs to stop a long-running request:
+
+- **Transport Termination**: Closing the underlying transport (e.g., the stdio stream) will stop the session, but this is a destructive action.
+- **Wait for Completion**: The client can choose to ignore further progress notifications and wait for the server to return a final response or time out.
+
+### Tasks API
+
+For operations that require formal cancellation support, the experimental [Tasks API](tasks.md) is the recommended approach.
+Tasks provide a dedicated `tasks/cancel` method:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "tasks/cancel",
+  "params": { "id": "task-123" },
+  "id": 3
+}
+```
+
 ## TypeScript Example
 
 ```typescript
@@ -77,6 +103,6 @@ server.tool("import_data", "Import a CSV file", {
 
 ## Notes
 
-- Progress tokens are optional — servers must check if one was provided
-- Send updates at reasonable intervals (not every iteration)
-- The `total` field may be unknown at the start
+- Progress tokens are optional — servers must check if one was provided.
+- Send updates at reasonable intervals (not every iteration).
+- The `total` field may be unknown at the start.

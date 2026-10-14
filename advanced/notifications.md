@@ -1,6 +1,7 @@
 # Notifications in MCP
 
-Notifications are one-way messages that don't require a response. Both clients and servers can send notifications to inform the other side of events.
+Notifications are one-way messages that don't require a response.
+Both clients and servers can send notifications to inform the other side of events.
 
 ## Server → Client Notifications
 
@@ -76,7 +77,8 @@ Notifications are one-way messages that don't require a response. Both clients a
 
 ## Progress Tracking
 
-Servers can report progress for long-running operations. The client provides a `progressToken` in the request's `_meta` field:
+Servers can report progress for long-running operations.
+The client provides a `progressToken` in the request's `_meta` field:
 
 ```json
 {
@@ -90,8 +92,16 @@ Servers can report progress for long-running operations. The client provides a `
 
 The server sends progress notifications using this token.
 
+## Cancellation
+
+The MCP protocol does not define a standard notification for cancelling in-flight requests (such as `$/cancel` in some JSON-RPC implementations).
+Standard requests must either be allowed to complete, or the client must terminate the transport session to force a stop.
+
+For operations that require formal cancellation support, use the experimental [Tasks API](tasks.md).
+Tasks provide a `tasks/cancel` method specifically for this purpose.
+
 ## Key Rules
 
-- Notifications MUST NOT include an `id` field
-- The receiver MUST NOT send a response to a notification
-- Both sides should handle unknown notification methods gracefully
+- Notifications MUST NOT include an `id` field.
+- The receiver MUST NOT send a response to a notification.
+- Both sides should handle unknown notification methods gracefully.
