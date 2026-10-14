@@ -35,6 +35,8 @@ The client manages the server's lifecycle:
 - Monitors for unexpected exits
 - Kills the process on disconnect
 
+For guidance on handling process failures and implementing reconnection logic, see [Error Recovery](../advanced/error-recovery.md).
+
 ## Streamable HTTP Transport
 
 ### When to Use
