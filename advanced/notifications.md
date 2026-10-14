@@ -90,6 +90,14 @@ Servers can report progress for long-running operations. The client provides a `
 
 The server sends progress notifications using this token.
 
+## Cancellation
+
+The Model Context Protocol does not define a standard notification for cancelling individual requests.
+For standard requests that include a `progressToken`, cancellation is only possible by terminating the transport connection.
+
+For operations that require explicit cancellation without closing the session, use the experimental [Tasks API](tasks.md).
+The Tasks API includes a `tasks/cancel` method for this purpose.
+
 ## Key Rules
 
 - Notifications MUST NOT include an `id` field

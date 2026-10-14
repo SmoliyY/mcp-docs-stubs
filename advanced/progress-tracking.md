@@ -75,6 +75,20 @@ server.tool("import_data", "Import a CSV file", {
 });
 ```
 
+## Cancellation
+
+Standard requests that use progress tracking (such as `tools/call`) do not support explicit cancellation through a dedicated JSON-RPC method.
+If a client needs to cancel an operation that is currently reporting progress, it has two options:
+
+- **Use the Tasks API**:
+  If an operation requires first-class cancellation support, use the experimental [Tasks API](tasks.md).
+  This API provides a dedicated `tasks/cancel` method.
+- **Terminate the Connection**:
+  Closing the transport connection (for example, closing the `stdin` stream for stdio servers) signals the server to terminate all active operations.
+  Servers must clean up associated resources, such as threads or child processes, when a connection closes to prevent resource leaks.
+
+Without using the Tasks API, there is no protocol mechanism to cancel a single request while keeping the rest of the MCP session active.
+
 ## Notes
 
 - Progress tokens are optional — servers must check if one was provided
