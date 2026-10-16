@@ -24,6 +24,14 @@ GET /authorize?
   ...
 ```
 
+## Response Validation
+
+Servers may grant a subset of the requested scopes. The client **must** inspect the `scope` field in the token response to determine which permissions were actually granted, rather than assuming it received all requested scopes.
+
+## Error Handling
+
+If a client requests a scope that the server does not support or recognize, the authorization server returns an `invalid_scope` error.
+
 ## Default Scopes (SEP-835)
 
 The 2025-11-25 specification introduced default scope definitions:
