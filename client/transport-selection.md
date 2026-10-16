@@ -30,12 +30,12 @@ const transport = new StdioClientTransport({
 ```
 
 ### Process Management
-The client manages the server's lifecycle:
-- Spawns the process on connect
-- Monitors for unexpected exits
-- Kills the process on disconnect
+The host application is responsible for managing the server's lifecycle:
+- **Spawning**: The process is started when the transport connects.
+- **Monitoring**: The host must monitor for unexpected exits. If a server crashes, pending requests may hang unless the transport is properly closed.
+- **Recovery**: If a server exits, the host should attempt to reconnect (using exponential backoff) or surface an error to the user.
 
-For guidance on handling process failures and implementing reconnection logic, see [Error Recovery](../advanced/error-recovery.md).
+For implementation details, see [Error Recovery](../advanced/error-recovery.md) and [Unexpected exits](../transports/stdio.md#unexpected-exits).
 
 ## Streamable HTTP Transport
 

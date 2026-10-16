@@ -26,6 +26,9 @@ class ResilientConnection {
         // Monitor for unexpected exit after successful connection
         transport.onClose = () => {
           console.error("Server process exited unexpectedly");
+          
+          // Reconnecting will typically create a new transport.
+          // Ensure the old transport is properly disposed of to reject pending requests.
           this.connect(config);
         };
         
