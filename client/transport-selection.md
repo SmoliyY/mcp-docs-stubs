@@ -31,11 +31,12 @@ const transport = new StdioClientTransport({
 
 ### Process Management
 The client manages the server's lifecycle:
-- Spawns the process on connect
-- Monitors for unexpected exits
-- Kills the process on disconnect
+- **Spawn**: Starts the process on connect.
+- **Monitor**: Listens for `exit` or `error` events on the child process to avoid hanging if the server crashes.
+- **Restart**: If the process terminates unexpectedly, attempt reconnection using exponential backoff.
+- **Cleanup**: Rejects pending requests and kills the process on disconnect.
 
-For guidance on handling process failures and implementing reconnection logic, see [Error Recovery](../advanced/error-recovery.md).
+For implementation examples and guidance on handling process failures, see [Error Recovery](../advanced/error-recovery.md).
 
 ## Streamable HTTP Transport
 

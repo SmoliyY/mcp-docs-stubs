@@ -71,6 +71,7 @@ Since stdio servers run as child processes, hosts must handle cases where the pr
   Implement exponential backoff (e.g., 1s, 2s, 4s, 8s) to prevent resource exhaustion.
 - **Notify the user**: If a server fails repeatedly, inform the user rather than silently failing or infinitely retrying.
 - **Cleanup resources**: Ensure that any pending requests are rejected with an appropriate error (e.g., "Connection closed") when the process exits.
+  This prevents the client from hanging while waiting for responses from a dead process.
 - **Log stderr**: Capture and log the `stderr` output from the failed process, as it likely contains the reason for the crash.
 
 For implementation examples, see [Error Recovery](../advanced/error-recovery.md).
