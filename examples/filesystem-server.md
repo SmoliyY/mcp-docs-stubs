@@ -11,15 +11,21 @@ npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/directory
 
 ## Tools Provided
 
-| Tool | Description |
-|------|-------------|
-| `read_file` | Read contents of a file |
-| `write_file` | Write content to a file |
-| `list_directory` | List files in a directory |
-| `create_directory` | Create a new directory |
-| `move_file` | Move or rename a file |
-| `search_files` | Search for files by name pattern |
-| `get_file_info` | Get file metadata (size, modified date) |
+| Tool | Parameters | Description |
+|------|------------|-------------|
+| `read_file` | `path` | Read contents of a file (UTF-8) |
+| `write_file` | `path`, `content` | Write content to a file (UTF-8) |
+| `list_directory` | `path` | List files in a directory |
+| `create_directory` | `path` | Create a new directory |
+| `move_file` | `from`, `to` | Move or rename a file |
+| `search_files` | `path`, `query` | Search for files by name pattern |
+| `get_file_info` | `path` | Get file metadata (size, modified date) |
+
+### Tool Behavior
+
+- **Encoding**: All file operations use UTF-8 encoding by default.
+- **Error Handling**: If a tool is called with a path outside the allowed directories, it returns a tool error (`isError: true`) with the message "Access denied".
+- **Path Validation**: Tools expect absolute paths or paths relative to the allowed directories. Parent directories must exist before calling `write_file` or `create_directory`.
 
 ## Resources Provided
 
