@@ -32,7 +32,8 @@ const transport = new StdioClientTransport({
 ### Process Management
 The client manages the server's lifecycle:
 - Spawns the process on connect
-- Monitors for unexpected exits
+- Monitors for unexpected exits and handles them by restarting with backoff or reporting an error
+- Rejects pending requests if the process exits to prevent the client from hanging
 - Kills the process on disconnect
 
 For guidance on handling process failures and implementing reconnection logic, see [Error Recovery](../advanced/error-recovery.md).
