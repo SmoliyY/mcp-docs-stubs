@@ -65,3 +65,5 @@ Use the Memory server to persist knowledge:
 - Require user confirmation for sensitive actions
 - Log all agent decisions for auditing
 - Implement circuit breakers for failing tools
+
+<!-- Slack card test 101620 #2 -->
