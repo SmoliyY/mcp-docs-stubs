@@ -22,10 +22,10 @@ const server = new McpServer({
 
 // Define a tool
 server.tool(
-  "hello",
-  "Say hello to someone",
-  { name: z.string().describe("Person's name") },
-  async ({ name }) => ({
+  "hello", // Tool name
+  "Say hello to someone", // Tool description
+  { name: z.string().describe("Person's name") }, // Input schema
+  async ({ name }) => ({ // Implementation handler
     content: [{ type: "text", text: `Hello, ${name}!` }]
   })
 );
@@ -60,7 +60,8 @@ await server.connect(transport);
 
 ## Zod Integration
 
-The SDK uses **Zod** for schema definition. Tool input schemas are defined as Zod objects, which are automatically converted to JSON Schema.
+The SDK uses **Zod** for schema definition.
+Tool input schemas are defined as Zod objects, which are automatically converted to JSON Schema.
 
 ## Repository
 

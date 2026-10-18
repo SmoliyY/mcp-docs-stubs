@@ -4,6 +4,8 @@ This guide covers how to define tools in MCP servers using both TypeScript and P
 
 ## TypeScript (Official SDK)
 
+The `server.tool` method is the primary way to register tools in the TypeScript SDK.
+
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
@@ -14,13 +16,15 @@ const server = new McpServer({
 });
 
 server.tool(
-  "search_files",
-  "Search for files matching a pattern",
+  "search_files", // Name of the tool
+  "Search for files matching a pattern", // Description for the LLM
   {
+    // Input schema (Zod)
     query: z.string().describe("Search query"),
     path: z.string().optional().describe("Directory to search in")
   },
   async ({ query, path }) => {
+    // Implementation handler
     const results = await performSearch(query, path);
     return {
       content: [{ type: "text", text: JSON.stringify(results) }]
@@ -28,6 +32,17 @@ server.tool(
   }
 );
 ```
+
+### Positional Arguments
+
+The `server.tool` method takes four positional arguments:
+
+| Argument | Type | Description |
+|----------|------|-------------|
+| **Name** | `string` | A unique name for the tool (e.g., `"search_files"`). |
+| **Description** | `string` | A human-readable description explaining when and how the LLM should use this tool. |
+| **Schema** | `object` | A Zod shape defining the tool's input parameters. This is automatically converted to JSON Schema. |
+| **Handler** | `function` | An asynchronous function that executes the tool logic with validated inputs. |
 
 ## Python (FastMCP)
 
