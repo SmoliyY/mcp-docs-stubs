@@ -18,6 +18,34 @@ Messages flow through:
 - **Client → Server**: Written to the server's `stdin`
 - **Server → Client**: Written to the server's `stdout`
 
+> [!WARNING]
+> **CRITICAL: Never write to `stdout`**
+>
+> Since `stdout` is used for the MCP protocol, any other data written to it will corrupt the stream and break the connection.
+> This includes debug logs, print statements, or any other manual output.
+>
+> - **Node.js**: Use `console.error()` instead of `console.log()`.
+> - **Python**: Use `print(..., file=sys.stderr)` instead of `print()`.
+>
+> ```javascript
+> // ❌ Breaks the protocol
+> console.log("Debug message");
+>
+> // ✅ Safe for logging
+> console.error("Debug message");
+> ```
+>
+> ```python
+> # ❌ Breaks the protocol
+> print("Debug message")
+>
+> # ✅ Safe for logging
+> import sys
+> print("Debug message", file=sys.stderr)
+> ```
+>
+> See [Transport Troubleshooting](../troubleshooting/transport-issues.md#server-writes-non-json-to-stdout) for more details.
+
 ## Message Framing
 
 Each JSON-RPC message is a single line of JSON, terminated by a newline character (`\n`).
