@@ -14,7 +14,30 @@ mkdir my-mcp-server && cd my-mcp-server
 npm init -y
 npm install @modelcontextprotocol/sdk zod
 npm install -D typescript @types/node
-npx tsc --init
+```
+
+In `package.json`, set `"type": "module"`:
+
+```json
+{
+  "type": "module"
+}
+```
+
+Create `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true
+  },
+  "include": ["src/**/*"]
+}
 ```
 
 ## Step 2: Create the Server
