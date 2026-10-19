@@ -28,6 +28,7 @@ Messages MUST NOT contain embedded newlines.
 The server's `stderr` is reserved for **logging and diagnostics**.
 It is NOT used for protocol messages.
 Hosts should capture stderr for debugging purposes.
+Hosts may discard stderr output, so servers must not rely on it for anything a user has to see.
 
 Servers MUST NOT write log messages or diagnostic output to `stdout` (such as using `console.log()` in JavaScript or `print()` in Python).
 Because `stdout` carries the JSON-RPC message stream, non-protocol data on `stdout` breaks message framing and causes JSON parse errors on the client.
