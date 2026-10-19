@@ -28,6 +28,26 @@ Messages MUST NOT contain embedded newlines.
 The server's `stderr` is reserved for **logging and diagnostics**.
 It is NOT used for protocol messages.
 Hosts should capture stderr for debugging purposes.
+Hosts may discard stderr output, so servers must not rely on it for anything a user has to see.
+
+Servers MUST NOT write log messages or diagnostic output to `stdout` (such as using `console.log()` in JavaScript or `print()` in Python).
+Because `stdout` carries the JSON-RPC message stream, non-protocol data on `stdout` breaks message framing and causes JSON parse errors on the client.
+
+To log debug messages from a stdio server, write to `stderr`:
+
+```typescript
+// TypeScript / JavaScript
+console.error("Debug: server initialized");
+```
+
+```python
+# Python
+import sys
+print("Debug: server initialized", file=sys.stderr)
+```
+
+Servers can also send structured log messages to the client using MCP's protocol-level [Logging](../server/logging.md) mechanism.
+For additional debugging guidance, see [Debugging MCP Servers](../troubleshooting/debugging-servers.md).
 
 ## Configuration Example
 
