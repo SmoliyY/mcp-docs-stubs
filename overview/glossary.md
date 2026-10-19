@@ -4,7 +4,7 @@ Key terms used throughout the MCP documentation.
 
 ## A
 
-**Annotations** — Metadata hints on tools describing behavior characteristics (read-only, destructive, idempotent).
+**Annotations** — Metadata hints on tools describing behavior characteristics (such as readOnlyHint, destructiveHint, and idempotentHint).
 
 ## C
 
@@ -13,6 +13,8 @@ Key terms used throughout the MCP documentation.
 **Client** — The MCP component within a host application that connects to a server. Each client has a 1:1 relationship with a server.
 
 **Content Block** — A unit of data in tool results or prompts. Types include text, image, and resource.
+
+**Cursor** — An opaque string returned by a server to fetch subsequent pages of list results in pagination.
 
 ## E
 
@@ -34,13 +36,19 @@ Key terms used throughout the MCP documentation.
 
 **Primitive** — One of the three core MCP abstractions: Tool, Resource, or Prompt.
 
+**Progress Notification** — A server-sent notification reporting progress updates for an operation associated with a progress token.
+
 **Progress Token** — An identifier provided by the client to track progress of long-running operations.
 
 **Prompt** — A reusable template that structures LLM interactions. User-controlled.
 
 ## R
 
+**readOnlyHint** — A tool annotation hint indicating that a tool does not modify state, allowing clients to auto-approve execution.
+
 **Resource** — A data source identified by a URI. Application-controlled, read-only.
+
+**Resource Template** — A parameterized URI pattern (RFC 6570) used by servers to expose dynamic resources.
 
 **Roots** — URIs provided by the client to the server indicating relevant workspace locations.
 
@@ -51,6 +59,8 @@ Key terms used throughout the MCP documentation.
 **Session** — An active connection between a client and server with negotiated capabilities.
 
 **Streamable HTTP** — The modern HTTP-based transport for remote MCP servers.
+
+**Subscription** — A mechanism allowing clients to receive real-time update notifications when a resource changes.
 
 ## T
 
