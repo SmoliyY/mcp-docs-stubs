@@ -29,6 +29,20 @@ The server's `stderr` is reserved for **logging and diagnostics**.
 It is NOT used for protocol messages.
 Hosts should capture stderr for debugging purposes.
 
+Servers must write all logging and diagnostic output to `stderr` rather than `stdout`.
+Writing non-protocol output to `stdout` (such as with `console.log()` or standard `print()`) breaks message framing and causes JSON parse errors in the client.
+
+```typescript
+// TypeScript / JavaScript
+console.error("Debug message");
+```
+
+```python
+# Python
+import sys
+print("Debug message", file=sys.stderr)
+```
+
 ## Configuration Example
 
 In Claude Desktop's config:
