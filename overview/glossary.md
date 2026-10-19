@@ -4,7 +4,7 @@ Key terms used throughout the MCP documentation.
 
 ## A
 
-**Annotations** — Metadata hints on tools describing behavior characteristics (read-only, destructive, idempotent).
+**Annotations** — Metadata hints on tools describing behavior characteristics. Often referred to as **tool annotations**, they include specific hints like `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint` to help clients manage tool execution safely.
 
 ## C
 
@@ -13,6 +13,8 @@ Key terms used throughout the MCP documentation.
 **Client** — The MCP component within a host application that connects to a server. Each client has a 1:1 relationship with a server.
 
 **Content Block** — A unit of data in tool results or prompts. Types include text, image, and resource.
+
+**Cursor** — An opaque string used for cursor-based pagination. Clients include this cursor in subsequent requests to fetch the next page of results.
 
 ## E
 
@@ -34,6 +36,8 @@ Key terms used throughout the MCP documentation.
 
 **Primitive** — One of the three core MCP abstractions: Tool, Resource, or Prompt.
 
+**Progress Notification** — A periodic update sent by a server to the client to report the progress of a long-running operation.
+
 **Progress Token** — An identifier provided by the client to track progress of long-running operations.
 
 **Prompt** — A reusable template that structures LLM interactions. User-controlled.
@@ -41,6 +45,8 @@ Key terms used throughout the MCP documentation.
 ## R
 
 **Resource** — A data source identified by a URI. Application-controlled, read-only.
+
+**Resource Template** — A parameterized URI pattern that allows servers to expose dynamic resources based on user-provided arguments.
 
 **Roots** — URIs provided by the client to the server indicating relevant workspace locations.
 
@@ -51,6 +57,8 @@ Key terms used throughout the MCP documentation.
 **Session** — An active connection between a client and server with negotiated capabilities.
 
 **Streamable HTTP** — The modern HTTP-based transport for remote MCP servers.
+
+**Subscription** — A mechanism for clients to subscribe to resource updates, allowing them to receive notifications when resource content changes.
 
 ## T
 
