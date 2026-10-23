@@ -53,7 +53,8 @@ For local use with Claude Desktop:
 ```
 
 Key flags:
-- `-i` — Keep stdin open (required for stdio transport)
+- `-i` — Keep stdin open (required for stdio transport).
+  Without `-i`, the container closes standard input, so the server never receives the `initialize` request and Claude Desktop times out after 30 seconds.
 - `--rm` — Remove container after exit
 - `-e` — Pass environment variables
 
