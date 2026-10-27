@@ -68,6 +68,12 @@ A notification is a one-way message that does not expect a response.
 }
 ```
 
+## Batch Messages
+
+MCP does not support JSON-RPC batching.
+Support for batched JSON-RPC messages was removed in specification version [2025-06-18](../changelog/2025-06-18.md) to simplify implementations.
+Clients must send each request as an individual JSON-RPC message.
+
 ## Standard Error Codes
 
 | Code | Meaning |
