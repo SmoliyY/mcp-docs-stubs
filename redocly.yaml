@@ -1,0 +1,12 @@
+reunite:
+  agent:
+    enabled: true
+
+    mcpServers:
+      Variable headers:
+        type: http
+        url: https://mcp.example.com/mcp
+        description: Takes its headers from project variables.
+        headers:
+          Authorization: 'Bearer {{ process.env.MCP_TOKEN }}'
+          X-Tenant: '{{ process.env.MCP_TENANT }}'
