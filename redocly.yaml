@@ -10,3 +10,8 @@ reunite:
         headers:
           Authorization: 'Bearer {{ process.env.MCP_TOKEN }}'
           X-Tenant: '{{ process.env.MCP_TENANT }}'
+    supportDesks:
+      'Front (real)':
+        provider: front
+        apiToken: '{{ process.env.FRONT_API_TOKEN2 }}'
+        signingSecret: '{{ process.env.FRONT_API_SECRET2 }}'
