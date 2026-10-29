@@ -4,7 +4,7 @@ Key terms used throughout the MCP documentation.
 
 ## A
 
-**Annotations** — Metadata hints on tools describing behavior characteristics (read-only, destructive, idempotent).
+**Annotations** — Metadata hints on tools (such as `readOnlyHint`, `destructiveHint`, and `idempotentHint`) describing behavior characteristics.
 
 ## C
 
@@ -13,6 +13,8 @@ Key terms used throughout the MCP documentation.
 **Client** — The MCP component within a host application that connects to a server. Each client has a 1:1 relationship with a server.
 
 **Content Block** — A unit of data in tool results or prompts. Types include text, image, and resource.
+
+**Cursor** — An opaque string returned by a server to fetch the next page of results in paginated requests.
 
 ## E
 
@@ -34,6 +36,8 @@ Key terms used throughout the MCP documentation.
 
 **Primitive** — One of the three core MCP abstractions: Tool, Resource, or Prompt.
 
+**Progress Notification** — A server-sent notification (`notifications/progress`) reporting the execution progress of a long-running request.
+
 **Progress Token** — An identifier provided by the client to track progress of long-running operations.
 
 **Prompt** — A reusable template that structures LLM interactions. User-controlled.
@@ -41,6 +45,8 @@ Key terms used throughout the MCP documentation.
 ## R
 
 **Resource** — A data source identified by a URI. Application-controlled, read-only.
+
+**Resource Template** — A parameterized URI pattern (RFC 6570) used by servers to expose dynamic resources.
 
 **Roots** — URIs provided by the client to the server indicating relevant workspace locations.
 
@@ -52,10 +58,14 @@ Key terms used throughout the MCP documentation.
 
 **Streamable HTTP** — The modern HTTP-based transport for remote MCP servers.
 
+**Subscription** — A client registration for a resource URI to receive real-time update notifications when that resource changes.
+
 ## T
 
 **Task** — An experimental abstraction for tracking long-running async operations.
 
 **Tool** — An executable function exposed by a server. Model-controlled.
+
+**Tool Annotation** — A metadata hint on a tool (such as `readOnlyHint` or `destructiveHint`) describing behavior characteristics to guide client execution decisions.
 
 **Transport** — The communication mechanism between client and server (stdio, Streamable HTTP).
