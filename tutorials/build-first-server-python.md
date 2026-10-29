@@ -51,6 +51,14 @@ if __name__ == "__main__":
     mcp.run()
 ```
 
+> [!IMPORTANT]
+> **Note on Logging**
+> Because MCP servers using the `stdio` transport communicate via standard output (`stdout`), you must not use `print()`.
+> The `stdout` stream is reserved for MCP protocol messages.
+>
+> Instead, use `sys.stderr` or the `logging` module to write to standard error (`stderr`).
+> MCP hosts capture `stderr` and typically include it in their own logs for debugging purposes.
+
 ## Step 3: Run the Server
 
 ```bash
