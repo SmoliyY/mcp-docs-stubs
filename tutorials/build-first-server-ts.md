@@ -12,9 +12,25 @@ This tutorial walks you through creating a simple MCP server in TypeScript that 
 ```bash
 mkdir my-mcp-server && cd my-mcp-server
 npm init -y
+npm pkg set type="module"
 npm install @modelcontextprotocol/sdk zod
 npm install -D typescript @types/node
-npx tsc --init
+```
+
+Configure `tsconfig.json` to compile files from `src` to `dist`:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true
+  },
+  "include": ["src/**/*"]
+}
 ```
 
 ## Step 2: Create the Server
