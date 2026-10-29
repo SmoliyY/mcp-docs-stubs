@@ -1,6 +1,6 @@
 # HTTP+SSE Transport (Deprecated)
 
-The original HTTP+SSE transport was part of the initial MCP specification (2024-11-05). It has been **deprecated** in favor of Streamable HTTP.
+The original HTTP+SSE transport was part of the initial MCP specification (2024-11-05). It has been **deprecated** in the 2025-06-18 specification in favor of Streamable HTTP.
 
 ## How It Worked
 

@@ -80,3 +80,7 @@ For implementation examples, see [Error Recovery](../advanced/error-recovery.md)
 - Clients SHOULD support stdio whenever possible
 - Servers MUST NOT write non-protocol data to stdout
 - Both sides should handle process termination gracefully
+
+## Shutdown
+
+A client stops a stdio server by closing its stdin. The server exits once it reads end of file.
