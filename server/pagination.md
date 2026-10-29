@@ -60,7 +60,8 @@ When there are no more pages, `nextCursor` is omitted or `null`.
 
 - Cursors are **opaque strings** — clients should not parse them
 - Servers determine their own page size
-- Cursors may expire — clients should handle invalid cursor errors
+- Cursors may expire — when a cursor is invalid or expired, the server returns a `-32602` (`Invalid params`) JSON-RPC error
+- Clients should handle invalid cursor errors by restarting pagination from the first page (omitting the `cursor` parameter) or aborting the request, rather than retrying the expired cursor
 - The cursor format is server-defined (often Base64-encoded JSON)
 
 ## TypeScript Example
