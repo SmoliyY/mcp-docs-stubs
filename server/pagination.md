@@ -56,12 +56,36 @@ When there are no more pages, `nextCursor` is omitted or `null`.
 | `resources/templates/list` | Resource templates |
 | `prompts/list` | Prompts |
 
+## Cursor Errors and Recovery
+
+When a client provides an invalid or expired cursor in `params`, the server returns a JSON-RPC error response with code `-32602` (`Invalid params`):
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "error": {
+    "code": -32602,
+    "message": "Invalid params",
+    "data": {
+      "details": "Invalid or expired cursor"
+    }
+  }
+}
+```
+
+### Client Recovery
+
+- **Do not retry the expired cursor**: An expired or invalid cursor does not recover.
+  Clients must avoid retrying requests with the same cursor value.
+- **Restart pagination**: The client should handle the error by requesting the first page again (omitting the `cursor` parameter), or by terminating the operation and reporting the error to the caller.
+
 ## Implementation Notes
 
-- Cursors are **opaque strings** — clients should not parse them
-- Servers determine their own page size
-- Cursors may expire — clients should handle invalid cursor errors
-- The cursor format is server-defined (often Base64-encoded JSON)
+- Cursors are **opaque strings** — clients should not parse them.
+- Servers determine their own page size.
+- Cursors may expire — servers return `-32602` (`Invalid params`), and clients should restart pagination from the first page rather than retrying the expired cursor.
+- The cursor format is server-defined (often Base64-encoded JSON).
 
 ## TypeScript Example
 
