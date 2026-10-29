@@ -29,6 +29,12 @@ The server's `stderr` is reserved for **logging and diagnostics**.
 It is NOT used for protocol messages.
 Hosts should capture stderr for debugging purposes.
 
+Servers MUST NOT write log messages or debug output to `stdout`.
+Writing non-protocol data (such as `console.log()` in JavaScript or `print()` in Python) to `stdout` corrupts the JSON-RPC message stream and causes client JSON parse errors.
+Instead, write all logging and debug output to `stderr` (for example, using `console.error()` or `sys.stderr`).
+
+For debugging techniques and examples, see [Debugging MCP Servers](../troubleshooting/debugging-servers.md).
+
 ## Configuration Example
 
 In Claude Desktop's config:
