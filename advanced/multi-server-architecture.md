@@ -28,7 +28,7 @@ All Available Tools:
 
 ## Name Conflicts
 
-When multiple servers define tools with the same name, hosts can:
+Tool names are only unique within an individual server; MCP defines no global namespace or namespacing rules. When multiple servers define tools with the same name, the host application disambiguates them in the model-facing tool list. For example, hosts can:
 
 1. **Prefix with server name**: `filesystem_read_file` vs `github_read_file`
 2. **Use namespaces**: `filesystem/read_file`
