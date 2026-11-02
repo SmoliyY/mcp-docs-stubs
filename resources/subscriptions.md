@@ -29,6 +29,8 @@ The server must declare subscription support during initialization:
 }
 ```
 
+Subscriptions are maintained per session. If a connection drops and the client reconnects in a new session, active subscriptions do not persist and the client must re-subscribe.
+
 ## Receiving Updates
 
 When a subscribed resource changes, the server sends a notification:
